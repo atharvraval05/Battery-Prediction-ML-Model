@@ -1,0 +1,20 @@
+# Python bytecode and compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Jupyter Notebook checkpoint directories
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/
+
+# Local custom data persistence (prevents committing test data coordinates)
+Mobile_Battery_Life_Prediction_Dataset_Custom.csv
+
+# OS-specific files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
