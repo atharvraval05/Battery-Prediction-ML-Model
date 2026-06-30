@@ -316,6 +316,7 @@
     .ingest-form {
       border-top: 1px solid rgba(0, 0, 0, 0.04);
       padding-top: 20px;
+      margin-bottom: 10px;
     }
 
     .ingest-form h3 {
@@ -329,7 +330,7 @@
 
     .form-inputs {
       display: grid;
-      grid-template-columns: 1.2fr 1.2fr 1fr;
+      grid-template-columns: 1fr 1fr 1fr;
       gap: 10px;
       align-items: flex-end;
     }
@@ -340,20 +341,21 @@
       }
     }
 
-    .form-inputs input {
+    .form-inputs input, .select-style {
       width: 100%;
-      background: rgba(255, 255, 255, 0.7);
-      border: 1px solid rgba(0, 0, 0, 0.08);
+      background: rgba(255, 255, 255, 0.75);
+      border: 1.5px solid rgba(0, 0, 0, 0.08);
       color: var(--text-dark);
       padding: 10px;
-      border-radius: 10px;
+      border-radius: 12px;
       font-family: inherit;
       font-size: 0.9rem;
       outline: none;
+      transition: border-color 0.2s;
     }
 
-    .form-inputs input:focus {
-      border-color: var(--pastel-orange);
+    .form-inputs input:focus, .select-style:focus {
+      border-color: var(--theme-reactive);
     }
 
     /* Buttons */
@@ -362,7 +364,7 @@
       color: var(--text-dark);
       border: none;
       padding: 10px 15px;
-      border-radius: 10px;
+      border-radius: 12px;
       font-family: inherit;
       font-weight: 700;
       font-size: 0.85rem;
@@ -370,6 +372,9 @@
       cursor: pointer;
       transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
       box-shadow: 0 4px 10px rgba(155, 140, 229, 0.15);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .btn:hover {
@@ -690,6 +695,8 @@
       justify-content: space-between;
       position: relative;
       overflow: hidden;
+      transform-style: preserve-3d;
+      transition: transform 0.15s ease-out;
     }
 
     .paycheck-header {
@@ -960,14 +967,6 @@
       margin-top: 4px;
     }
 
-    /* Keyframes */
-    @keyframes fadeInReveal {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
     .simulator-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -992,19 +991,6 @@
       font-weight: 600;
       text-transform: uppercase;
       color: var(--text-muted);
-    }
-
-    .select-style {
-      background: rgba(255, 255, 255, 0.7);
-      border: 1px solid rgba(0, 0, 0, 0.08);
-      color: var(--text-dark);
-      padding: 10px 14px;
-      border-radius: 12px;
-      font-family: inherit;
-      font-size: 0.9rem;
-      outline: none;
-      cursor: pointer;
-      transition: border-color 0.3s, background-color 0.3s;
     }
 
     .toggle-box {
@@ -1053,6 +1039,93 @@
       left: 2px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.1);
       transition: left 0.3s, background-color 0.3s;
+    }
+
+    /* Scrollable Data table styling inside VoltAI style */
+    .table-container {
+      max-height: 160px;
+      overflow-y: auto;
+      border-radius: 14px;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      background: rgba(255, 255, 255, 0.65);
+      margin-top: 15px;
+    }
+
+    .table-container::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .table-container::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .table-container::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.15);
+      border-radius: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    thead {
+      position: sticky;
+      top: 0;
+      background: #f1ede8;
+      z-index: 2;
+    }
+
+    th {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      padding: 8px 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    td {
+      font-size: 0.85rem;
+      padding: 6px 12px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+      color: var(--text-dark);
+      font-weight: 500;
+    }
+
+    tbody tr:hover {
+      background-color: rgba(255, 255, 255, 0.35);
+    }
+
+    .btn-delete {
+      background: none;
+      border: none;
+      cursor: pointer;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      margin: 0 auto;
+      transition: background-color 0.2s;
+    }
+
+    .btn-delete:hover {
+      background-color: rgba(229, 127, 127, 0.15);
+    }
+
+    .trash-icon-svg {
+      width: 12px;
+      height: 12px;
+      stroke: var(--text-muted);
+      fill: none;
+      transition: stroke 0.2s;
+    }
+
+    .btn-delete:hover .trash-icon-svg {
+      stroke: var(--pastel-red);
     }
 
     footer.app-footer {
@@ -1104,12 +1177,16 @@
               <span class="badge">Simulation Settings</span>
             </div>
 
+            <!-- Battery synced slider and number box -->
             <div class="slider-box">
               <div class="slider-header">
                 <span class="slider-label">Screen On Time (SOT)</span>
-                <div class="slider-display display-reactive-color" id="battery-sot-display-val">5.0<span>hrs</span></div>
+                <div class="input-with-unit" style="display: flex; align-items: center; background: rgba(255,255,255,0.7); border: 1.5px solid rgba(0,0,0,0.08); border-radius: 50px; padding: 2px 10px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.03);">
+                  <input type="number" id="battery-sot-numeric-box" min="0" max="12.0" step="0.1" value="5.0" style="border: none; background: transparent; outline: none; width: 45px; text-align: right; font-weight: 700; color: var(--pastel-green); font-family: inherit;" oninput="handleSyncedNumberInput('battery', this)">
+                  <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-left: 2px;">Hrs</span>
+                </div>
               </div>
-              <input type="range" class="control-slider" id="battery-sot-slider-control" min="0" max="12.0" step="0.1" value="5.0" oninput="handleSliderInput(this, 'battery')">
+              <input type="range" class="control-slider" id="battery-sot-slider-control" min="0" max="12.0" step="0.1" value="5.0" oninput="handleSyncedSliderInput('battery', this)">
               <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted);">
                 <span>0.0h (Full)</span>
                 <span>4.0h</span>
@@ -1164,6 +1241,23 @@
                 <button type="submit" class="btn">Retrain</button>
               </div>
             </form>
+            
+            <!-- Table listing coordinates inside Left panel -->
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>SOT (X)</th>
+                    <th>Remaining % (Y)</th>
+                    <th style="width: 50px; text-align: center;">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="battery-table-body">
+                  <!-- JS rows -->
+                </tbody>
+              </table>
+            </div>
+
             <div style="margin-top: 15px; display: flex; justify-content: flex-end;">
               <button class="btn btn-reset" onclick="resetDataset('battery')">Restore Default Data</button>
             </div>
@@ -1233,237 +1327,121 @@
 
     <!-- ==================== WORKSPACE 2: SALARY PREDICTOR ==================== -->
     <main class="workspace-section" id="workspace-salary">
-      <div class="dashboard-grid">
-        
-        <!-- LEFT SIDEBAR: Controls & Insights -->
-        <div class="dashboard-sidebar">
-          
-          <!-- Sandbox Card -->
-          <section class="card sandbox-card">
+      <div class="top-section-grid">
+        <!-- Left controller card -->
+        <section class="card">
+          <div>
             <div class="card-header">
-              <span class="card-icon">
-                <svg class="card-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="4" y1="21" x2="4" y2="14"></line>
-                  <line x1="4" y1="10" x2="4" y1="3"></line>
-                  <line x1="12" y1="21" x2="12" y2="12"></line>
-                  <line x1="12" y1="8" x2="12" y2="3"></line>
-                  <line x1="20" y1="21" x2="20" y2="16"></line>
-                  <line x1="20" y1="12" x2="20" y1="3"></line>
-                  <line x1="1" y1="14" x2="7" y1="14"></line>
-                  <line x1="9" y1="8" x2="15" y1="8"></line>
-                  <line x1="17" y1="16" x2="23" y1="16"></line>
-                </svg>
-              </span>
-              <h2>Interactive Predictor</h2>
-            </div>
-            
-            <div class="salary-display-container" style="display: flex; flex-direction: column; align-items: center; padding: 1.5rem 1rem; background: linear-gradient(135deg, rgba(229, 193, 88, 0.15) 0%, rgba(255,255,255,0.75) 100%); border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.8); text-align: center;">
-              <p style="font-size: 0.75rem; font-weight: 700; color: #bca042; margin-bottom: 0.25rem; letter-spacing: 0.05em; text-transform: uppercase;">EXPECTED SALARY</p>
-              <div style="display: flex; align-items: flex-start; justify-content: center; font-weight: 700; color: var(--text-dark);">
-                <span style="font-size: 1.5rem; margin-top: 0.15rem; margin-right: 0.15rem; color: #e5c158;">$</span>
-                <span id="salary-value-num" style="font-size: 2.8rem; letter-spacing: -0.04em; line-height: 1;">89,820</span>
-              </div>
-              <p class="prediction-info" id="salary-value-info" style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.4rem; font-weight: 500;">At 5.0 years of experience</p>
+              <h2>Salary Simulator Controller</h2>
+              <span class="badge" style="color: var(--pastel-gold); border-color: rgba(229,193,88,0.3);">Linear Regression</span>
             </div>
 
-            <div class="control-group" style="display: flex; flex-direction: column; gap: 0.4rem; margin-top: 15px;">
-              <div class="slider-header" style="display: flex; justify-content: space-between; align-items: center;">
-                <label for="salary-numeric-val-input" class="control-label" style="font-size: 0.9rem; font-weight: 600;">Years of Experience</label>
-                <div class="input-with-unit" style="display: flex; align-items: center; background: white; border: 1px solid rgba(0,0,0,0.1); border-radius: 50px; padding: 2px 10px;">
-                  <input type="number" id="salary-numeric-val-input" min="0" max="15" step="0.1" value="5.0" style="border: none; background: transparent; outline: none; width: 45px; text-align: right; font-weight: 700; color: #e5c158;" oninput="handleSalaryExpNumericBox(this)">
-                  <span class="input-unit" style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-left: 2px;">Yrs</span>
+            <!-- Salary synced slider and number box -->
+            <div class="slider-box">
+              <div class="slider-header">
+                <span class="slider-label">Work Experience</span>
+                <div class="input-with-unit" style="display: flex; align-items: center; background: rgba(255,255,255,0.7); border: 1.5px solid rgba(0,0,0,0.08); border-radius: 50px; padding: 2px 10px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.03);">
+                  <input type="number" id="salary-exp-numeric-box" min="0" max="15.0" step="0.1" value="5.0" style="border: none; background: transparent; outline: none; width: 45px; text-align: right; font-weight: 700; color: var(--pastel-gold); font-family: inherit;" oninput="handleSyncedNumberInput('salary', this)">
+                  <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-left: 2px;">Yrs</span>
                 </div>
               </div>
-              <input type="range" class="control-slider" id="salary-slider-control-input" min="0" max="15" step="0.1" value="5" style="-webkit-appearance: none; width: 100%; height: 8px; border-radius: 10px; background: #cbd5e1; outline: none; cursor: pointer; margin: 8px 0;" oninput="handleSalaryExpSlider(this)">
-              <div class="slider-ticks" style="display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--text-muted);">
-                <span>0y</span>
-                <span>3y</span>
-                <span>6y</span>
-                <span>9y</span>
-                <span>12y</span>
-                <span>15y</span>
+              <input type="range" class="control-slider" id="salary-exp-slider-control" min="0" max="15.0" step="0.1" value="5.0" oninput="handleSyncedSliderInput('salary', this)">
+              <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted);">
+                <span>0.0y (Entry)</span>
+                <span>5.0y</span>
+                <span>10.0y</span>
+                <span>15.0y (Expert)</span>
               </div>
             </div>
 
-            <div class="quick-actions" style="display: flex; gap: 10px; margin-top: 10px;">
-              <button class="btn btn-secondary" onclick="resetSalarySlider()">Reset Slider</button>
-              <button class="btn btn-secondary" onclick="useSalaryMeanExp()">Use Mean Exp</button>
-            </div>
-          </section>
-
-          <!-- Model Insights Card -->
-          <section class="card stats-card">
-            <div class="card-header">
-              <span class="card-icon">
-                <svg class="card-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="18" cy="5" r="3"></circle>
-                  <circle cx="6" cy="12" r="3"></circle>
-                  <circle cx="18" cy="19" r="3"></circle>
-                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-                  <line x1="15.41" y1="6.51" x2="8.59" y1="10.49"></line>
-                </svg>
-              </span>
-              <h2>Model Insights</h2>
-            </div>
-            
-            <div class="equation-box" style="background: linear-gradient(135deg, rgba(229,193,88,0.15) 0%, rgba(255,255,255,0.75) 100%); padding: 1rem; border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.8); text-align: center;">
-              <p class="formula-title" style="font-size: 0.65rem; font-weight: 700; color: #bca042; margin-bottom: 0.25rem;">LEARNED REGRESSION EQUATION</p>
-              <div class="formula-display" id="salary-formula-math" style="font-family: var(--font-headers); font-size: 1rem; font-weight: 600;">
-                Salary = <span class="highlight" style="color: #e5c158; font-weight: 700;">m</span> * Exp + <span class="highlight" style="color: #e5c158; font-weight: 700;">c</span>
-              </div>
-            </div>
-
-            <div class="metrics-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-              <div class="metric-tile" style="background: white; padding: 10px; border-radius: 12px; border: 1px solid var(--panel-border); display: flex; flex-direction: column;">
-                <span class="metric-title" style="font-size: 0.7rem; color: var(--text-muted);">Goodness of Fit (R²)</span>
-                <span class="metric-val" id="salary-r2-val" style="font-size: 1.15rem; font-weight: 700;">0.960</span>
-                <span class="metric-meta" id="salary-r2-desc" style="font-size: 0.65rem; color: var(--text-muted); margin-top: auto;">Excellent fit</span>
-              </div>
-              <div class="metric-tile" style="background: white; padding: 10px; border-radius: 12px; border: 1px solid var(--panel-border); display: flex; flex-direction: column;">
-                <span class="metric-title" style="font-size: 0.7rem; color: var(--text-muted);">Slope (Growth)</span>
-                <span class="metric-val" id="salary-slope-val" style="font-size: 1.15rem; font-weight: 700;">$12,789</span>
-                <span class="metric-meta" style="font-size: 0.65rem; color: var(--text-muted); margin-top: auto;">Per year of exp</span>
-              </div>
-              <div class="metric-tile" style="background: white; padding: 10px; border-radius: 12px; border: 1px solid var(--panel-border); display: flex; flex-direction: column;">
-                <span class="metric-title" style="font-size: 0.7rem; color: var(--text-muted);">Intercept (Base)</span>
-                <span class="metric-val" id="salary-intercept-val" style="font-size: 1.15rem; font-weight: 700;">$19,998</span>
-                <span class="metric-meta" style="font-size: 0.65rem; color: var(--text-muted); margin-top: auto;">At zero exp</span>
-              </div>
-              <div class="metric-tile" style="background: white; padding: 10px; border-radius: 12px; border: 1px solid var(--panel-border); display: flex; flex-direction: column;">
-                <span class="metric-title" style="font-size: 0.7rem; color: var(--text-muted);">Total Samples (N)</span>
-                <span class="metric-val" id="salary-samples-val" style="font-size: 1.15rem; font-weight: 700;">7</span>
-                <span class="metric-meta" style="font-size: 0.65rem; color: var(--text-muted); margin-top: auto;">Data points</span>
-              </div>
-            </div>
-
-            <div class="insights-summary" id="salary-insights-text-desc" style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.45; background: #f8fafc; padding: 10px; border-radius: 12px; border-left: 4px solid var(--pastel-gold);">
-              Strong positive correlation.
-            </div>
-          </section>
-        </div>
-
-        <!-- RIGHT CONTENT: Mockup, Chart & Dataset Table -->
-        <div class="dashboard-content">
-          
-          <!-- Mockup Showcase Card -->
-          <section class="card" style="padding: 20px;">
-            <div class="card-header" style="margin-bottom: 10px;">
-              <span class="card-icon">
-                <svg class="card-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <rect x="2" y="4" width="20" height="16" rx="2"></rect>
-                  <line x1="12" y1="4" x2="12" y2="20"></line>
-                </svg>
-              </span>
-              <h2>Interactive Paycheck Showcase</h2>
-            </div>
-            <div class="salary-showcase" id="paycheck-tilt-wrapper">
-              <div class="paycheck-frame" id="paycheck-3d">
-                <div class="paycheck-header">
-                  <div class="paycheck-corp">
-                    <span class="paycheck-corp-name">VoltAI Global Inc.</span>
-                    <span class="paycheck-corp-sub">Compensation Statement</span>
-                  </div>
-                  <div class="paycheck-seal">Seal</div>
-                </div>
-
-                <div class="paycheck-body">
-                  <div class="paycheck-amount-box">
-                    <div class="paycheck-amount-num" id="paycheck-readout-salary">$89,820</div>
-                    <div class="paycheck-amount-label">Estimated Annual Salary</div>
-                  </div>
-
-                  <div class="paycheck-row">
-                    <span class="paycheck-row-label">Simulated Experience:</span>
-                    <span class="paycheck-row-value" id="paycheck-readout-exp">5.0 Years</span>
-                  </div>
-                  <div class="paycheck-row">
-                    <span class="paycheck-row-label">Weekly Paycheck estimate:</span>
-                    <span class="paycheck-row-value" id="paycheck-readout-weekly">$1,727</span>
-                  </div>
-
-                  <div class="paycheck-progress-container">
-                    <div style="display: flex; justify-content: space-between; font-size: 0.65rem; font-weight: 700; color: var(--text-muted);">
-                      <span>Salary Scale Percentile</span>
-                      <span id="paycheck-percentile-label">74%</span>
-                    </div>
-                    <div class="paycheck-progress-bar">
-                      <div class="paycheck-progress-fill" id="paycheck-progress-fill"></div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="paycheck-footer">
-                  COMPENSATION SECURE ID: ML-9820-2026
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <!-- Dedicated Regression Chart Card -->
-          <section class="card">
-            <div class="card-header">
-              <span class="card-icon">
-                <svg class="card-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="18" y1="20" x2="18" y2="10"></line>
-                  <line x1="12" y1="20" x2="12" y2="4"></line>
-                  <line x1="6" y1="20" x2="6" y2="14"></line>
-                </svg>
-              </span>
-              <h2>Regression Line Mapping</h2>
-            </div>
-            <div class="chart-container" style="height: 300px; position: relative; width: 100%;">
-              <canvas id="salary-regression-chart-canvas"></canvas>
-            </div>
-          </section>
-
-          <!-- Training Dataset Table Card -->
-          <section class="card">
-            <div class="card-header" style="justify-content: space-between;">
-              <div style="display:flex; align-items:center; gap: 0.65rem;">
-                <span class="card-icon">
-                  <svg class="card-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 22c5.523 0 10-2.239 10-5V5c0-2.761-4.477-5-10-5S2 2.239 2 5v12c0 2.761 4.477 5 10 5z"></path>
-                  </svg>
-                </span>
-                <h2>Training Dataset Hub</h2>
-              </div>
-              <div class="preset-selector-container" style="display: flex; align-items: center; gap: 8px;">
-                <label for="salary-preset-select" style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">Profile:</label>
-                <select id="salary-preset-select" class="select-style" style="padding: 4px 10px; border-radius: 50px;" onchange="handleSalaryPresetChange(this)">
-                  <option value="corporate" selected>Tech Industry Corporate</option>
-                  <option value="tech">High-Growth Startups</option>
-                  <option value="noisy">Volatile Consulting</option>
+            <div class="simulator-grid" style="grid-template-columns: 1fr;">
+              <div class="sim-group">
+                <span class="sim-label">Dataset profile selector</span>
+                <select id="salary-preset-select" class="select-style" onchange="handleSalaryPresetChange(this)">
+                  <option value="corporate" selected>Corporate Industry Baseline</option>
+                  <option value="tech">High-Growth Tech Startups (Exponential)</option>
+                  <option value="noisy">Volatile Consulting (High Noise)</option>
                 </select>
               </div>
             </div>
+          </div>
 
-            <div class="table-container" style="max-height: 200px; overflow-y: auto; border-radius: 12px; border: 1px solid var(--panel-border); background: white;">
-              <table style="width: 100%; border-collapse: collapse;">
-                <thead style="position: sticky; top: 0; background: #f8fafc; box-shadow: 0 1px 0 var(--panel-border); z-index: 2;">
+          <div class="ingest-form">
+            <h3>Inject Salary Coordinate</h3>
+            <form onsubmit="submitPoint(event, 'salary')">
+              <div class="form-inputs">
+                <input type="number" id="salary-input-exp" min="0" max="50" step="0.5" placeholder="Exp Years" required>
+                <input type="number" id="salary-input-val" min="0" step="100" placeholder="Salary ($)" required>
+                <button type="submit" class="btn" style="background: var(--pastel-gold); color: var(--text-dark); box-shadow: none;">Retrain</button>
+              </div>
+            </form>
+
+            <!-- Table listing coordinates inside Left panel -->
+            <div class="table-container">
+              <table>
+                <thead>
                   <tr>
-                    <th style="padding: 10px; font-family: var(--font-headers); font-size: 0.8rem; color: var(--text-muted); text-align: left;">Years of Exp (X)</th>
-                    <th style="padding: 10px; font-family: var(--font-headers); font-size: 0.8rem; color: var(--text-muted); text-align: left;">Annual Salary ($) (Y)</th>
-                    <th style="width: 80px; text-align: center; padding: 10px; font-family: var(--font-headers); font-size: 0.8rem; color: var(--text-muted);">Action</th>
+                    <th>Exp (X)</th>
+                    <th>Salary (Y)</th>
+                    <th style="width: 50px; text-align: center;">Action</th>
                   </tr>
                 </thead>
-                <tbody id="salary-table-body-rows">
+                <tbody id="salary-table-body">
                   <!-- JS rows -->
                 </tbody>
               </table>
             </div>
 
-            <!-- Ingest Form inline row -->
-            <form onsubmit="handleSalaryTableAddSubmit(event)" style="display: flex; gap: 10px; background: white; padding: 8px; border-radius: 12px; border: 1px solid var(--panel-border); margin-top: 10px;">
-              <input type="number" id="salary-add-exp" placeholder="Exp (e.g. 5.5)" step="0.1" min="0" max="30" required style="flex:1; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--panel-border); outline:none;">
-              <input type="number" id="salary-add-salary" placeholder="Salary ($)" min="0" required style="flex:1; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--panel-border); outline:none;">
-              <button type="submit" class="btn btn-primary" style="background: var(--pastel-gold); color: var(--text-dark); box-shadow: none;">Add Point</button>
-            </form>
-            <div style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center;">
-              <button class="btn btn-secondary btn-reset" style="padding: 4px 10px; font-size: 0.75rem;" onclick="restoreSalaryDatasetDefaults(event)">Reset Defaults</button>
+            <div style="margin-top: 15px; display: flex; justify-content: flex-end;">
+              <button class="btn btn-reset" onclick="resetDataset('salary')">Restore Default Data</button>
             </div>
-          </section>
+          </div>
+        </section>
 
-        </div>
+        <!-- Right paycheck card mockup -->
+        <section class="card" style="padding: 20px;">
+          <div class="salary-showcase" id="paycheck-tilt-wrapper">
+            <div class="paycheck-frame" id="paycheck-3d">
+              <div class="paycheck-header">
+                <div class="paycheck-corp">
+                  <span class="paycheck-corp-name">VoltAI Global Inc.</span>
+                  <span class="paycheck-corp-sub">Compensation Statement</span>
+                </div>
+                <div class="paycheck-seal">Seal</div>
+              </div>
+
+              <div class="paycheck-body">
+                <div class="paycheck-amount-box">
+                  <div class="paycheck-amount-num" id="paycheck-readout-salary">$89,820</div>
+                  <div class="paycheck-amount-label">Estimated Annual Salary</div>
+                </div>
+
+                <div class="paycheck-row">
+                  <span class="paycheck-row-label">Simulated Experience:</span>
+                  <span class="paycheck-row-value" id="paycheck-readout-exp">5.0 Years</span>
+                </div>
+                <div class="paycheck-row">
+                  <span class="paycheck-row-label">Weekly Paycheck estimate:</span>
+                  <span class="paycheck-row-value" id="paycheck-readout-weekly">$1,727</span>
+                </div>
+
+                <div class="paycheck-progress-container">
+                  <div style="display: flex; justify-content: space-between; font-size: 0.65rem; font-weight: 700; color: var(--text-muted);">
+                    <span>Salary Scale Percentile</span>
+                    <span id="paycheck-percentile-label">74%</span>
+                  </div>
+                  <div class="paycheck-progress-bar">
+                    <div class="paycheck-progress-fill" id="paycheck-progress-fill"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="paycheck-footer">
+                COMPENSATION SECURE ID: ML-9820-2026
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
     </main>
 
@@ -1471,20 +1449,23 @@
     <main class="workspace-section" id="workspace-income">
       <div class="top-section-grid">
         <!-- Left controller card -->
-        <section class="card">
+        <section class="card" style="justify-content: flex-start; gap: 20px;">
           <div>
-            <div class="card-header">
-              <h2>Multiple Regression Sandbox</h2>
+            <div class="card-header" style="margin-bottom: 15px;">
+              <h2>Multiple Regression Controller</h2>
               <span class="badge" style="color: var(--pastel-blue); border-color: rgba(123,181,207,0.3);">Double Feature</span>
             </div>
 
-            <!-- Age Slider -->
+            <!-- Age Slider synced -->
             <div class="slider-box">
               <div class="slider-header">
                 <span class="slider-label">Age coordinate (x₁)</span>
-                <div class="slider-display" id="income-age-display-val" style="color: var(--pastel-blue);">37<span>yrs</span></div>
+                <div class="input-with-unit" style="display: flex; align-items: center; background: rgba(255,255,255,0.7); border: 1.5px solid rgba(0,0,0,0.08); border-radius: 50px; padding: 2px 10px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.03);">
+                  <input type="number" id="income-age-numeric-box" min="20" max="60" step="1" value="37" style="border: none; background: transparent; outline: none; width: 40px; text-align: right; font-weight: 700; color: var(--pastel-blue); font-family: inherit;" oninput="handleSyncedNumberInput('income-age', this)">
+                  <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-left: 2px;">Yrs</span>
+                </div>
               </div>
-              <input type="range" class="control-slider" id="income-age-slider-control" min="20" max="60" step="1" value="37" oninput="handleSliderInput(this, 'income-age')">
+              <input type="range" class="control-slider" id="income-age-slider-control" min="20" max="60" step="1" value="37" oninput="handleSyncedSliderInput('income-age', this)">
               <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted);">
                 <span>20 (Young)</span>
                 <span>40</span>
@@ -1492,13 +1473,16 @@
               </div>
             </div>
 
-            <!-- Experience Slider -->
+            <!-- Experience Slider synced -->
             <div class="slider-box">
               <div class="slider-header">
                 <span class="slider-label">Experience coordinate (x₂)</span>
-                <div class="slider-display" id="income-exp-display-val" style="color: var(--pastel-blue);">5.0<span>yrs</span></div>
+                <div class="input-with-unit" style="display: flex; align-items: center; background: rgba(255,255,255,0.7); border: 1.5px solid rgba(0,0,0,0.08); border-radius: 50px; padding: 2px 10px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.03);">
+                  <input type="number" id="income-exp-numeric-box" min="0" max="20" step="0.5" value="5.0" style="border: none; background: transparent; outline: none; width: 40px; text-align: right; font-weight: 700; color: var(--pastel-blue); font-family: inherit;" oninput="handleSyncedNumberInput('income-exp', this)">
+                  <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-left: 2px;">Yrs</span>
+                </div>
               </div>
-              <input type="range" class="control-slider" id="income-exp-slider-control" min="0" max="20" step="0.5" value="5.0" oninput="handleSliderInput(this, 'income-exp')">
+              <input type="range" class="control-slider" id="income-exp-slider-control" min="0" max="20" step="0.5" value="5.0" oninput="handleSyncedSliderInput('income-exp', this)">
               <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted);">
                 <span>0.0y (Entry)</span>
                 <span>10.0y</span>
@@ -1513,7 +1497,8 @@
             </div>
           </div>
 
-          <div class="ingest-form">
+          <!-- Ingestion Form & coordinates table inside Left panel -->
+          <div class="ingest-form" style="border-top: 1px solid rgba(0, 0, 0, 0.04); padding-top: 20px;">
             <h3>Inject ML Coordinate Trio</h3>
             <form onsubmit="submitPoint(event, 'income')">
               <div class="form-inputs" style="grid-template-columns: 1fr 1fr 1fr 0.8fr;">
@@ -1523,18 +1508,72 @@
                 <button type="submit" class="btn" style="background: var(--pastel-blue); padding: 10px 5px;">Retrain</button>
               </div>
             </form>
-            <div style="margin-top: 15px; display: flex; justify-content: flex-end;">
+
+            <div class="table-container" style="max-height:150px;">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Age (x₁)</th>
+                    <th>Exp (x₂)</th>
+                    <th>Income (Y)</th>
+                    <th style="width: 50px; text-align: center;">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="income-table-body">
+                  <!-- JS rows -->
+                </tbody>
+              </table>
+            </div>
+
+            <div style="margin-top: 15px; display: flex; justify-content: flex-end; gap:10px;">
+              <button class="btn btn-secondary" onclick="useActiveDatasetMean()">Use Mean Inputs</button>
               <button class="btn btn-reset" onclick="resetDataset('income')">Restore Default Data</button>
             </div>
           </div>
         </section>
 
-        <!-- Right 3D surface plot showcase -->
-        <section class="card" style="padding: 15px; justify-content: center;">
-          <div class="plotly-showcase">
-            <div class="plotly-container" id="plotlyIncome3d"></div>
-          </div>
-        </section>
+        <!-- Right 3D surface plot showcase & Formula Insights block -->
+        <div style="display:flex; flex-direction:column; gap:25px;">
+          <!-- 3D Plotly Showcase -->
+          <section class="card" style="padding: 15px; justify-content: center; min-height:410px;">
+            <div class="plotly-showcase">
+              <div class="plotly-container" id="plotlyIncome3d" style="height:380px;"></div>
+            </div>
+          </section>
+
+          <!-- Multiple Regression learned formula HUD -->
+          <section class="card" style="padding: 20px;">
+            <div class="card-header" style="margin-bottom:10px; padding-bottom:10px;">
+              <h2>Multiple Regression Insights</h2>
+            </div>
+            
+            <div class="formula-display-box" style="background: rgba(123, 181, 207, 0.05); border: 1.5px solid rgba(123, 181, 207, 0.15);">
+              <span>Fitted Learned Multiple Regression Equation</span>
+              <div id="income-formula-math-display" style="font-family: 'Space Grotesk', monospace; font-size:1.05rem; font-weight:700; color:var(--text-dark);">
+                Income = coef₁ * Age + coef₂ * Exp + intercept
+              </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:10px; margin-top:15px;">
+              <div class="metric-data-cell" style="height:60px; padding:6px 10px;">
+                <span class="metric-data-label" style="font-size:0.6rem;">Goodness of Fit (R²)</span>
+                <span class="metric-data-value" id="income-r2-display" style="font-size:1.1rem;">0.950</span>
+              </div>
+              <div class="metric-data-cell" style="height:60px; padding:6px 10px;">
+                <span class="metric-data-label" style="font-size:0.6rem;">Age Coef (w₁)</span>
+                <span class="metric-data-value" id="income-w1-display" style="font-size:1.1rem;">$150</span>
+              </div>
+              <div class="metric-data-cell" style="height:60px; padding:6px 10px;">
+                <span class="metric-data-label" style="font-size:0.6rem;">Exp Coef (w₂)</span>
+                <span class="metric-data-value" id="income-w2-display" style="font-size:1.1rem;">$2,350</span>
+              </div>
+              <div class="metric-data-cell" style="height:60px; padding:6px 10px;">
+                <span class="metric-data-label" style="font-size:0.6rem;">Intercept (b)</span>
+                <span class="metric-data-value" id="income-intercept-display" style="font-size:1.1rem;">$12,000</span>
+              </div>
+            </div>
+          </section>
+        </div>
       </div>
     </main>
 
@@ -1615,120 +1654,19 @@
 
     <!-- FOOTER -->
     <footer class="app-footer">
-      <span>VoltAI Engine — Developed with FastAPI, Scikit-learn, Web Audio SFX, and Plotly 3D</span>
+      <span>VoltAI Engine — Developed with FastAPI, Scikit-learn, and Plotly 3D</span>
     </footer>
 
   </div>
 
   <script>
-    // Synthesized Audio SFX Engine (Web Audio API)
-    class AudioEngine {
-      constructor() {
-        this.ctx = null;
-      }
-      
-      init() {
-        if (!this.ctx) {
-          this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-        }
-      }
-
-      playTick() {
-        this.init();
-        if (!this.ctx) return;
-        
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(1200, this.ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(300, this.ctx.currentTime + 0.05);
-        
-        gain.gain.setValueAtTime(0.02, this.ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.05);
-        
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
-        
-        osc.start();
-        osc.stop(this.ctx.currentTime + 0.05);
-      }
-
-      playClick() {
-        this.init();
-        if (!this.ctx) return;
-        
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(150, this.ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(40, this.ctx.currentTime + 0.08);
-        
-        gain.gain.setValueAtTime(0.12, this.ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.08);
-        
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
-        
-        osc.start();
-        osc.stop(this.ctx.currentTime + 0.08);
-      }
-
-      playSuccess() {
-        this.init();
-        if (!this.ctx) return;
-        
-        const now = this.ctx.currentTime;
-        const notes = [261.63, 329.63, 392.00, 523.25]; // C4, E4, G4, C5
-        
-        notes.forEach((freq, idx) => {
-          const osc = this.ctx.createOscillator();
-          const gain = this.ctx.createGain();
-          
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(freq, now + idx * 0.08);
-          
-          gain.gain.setValueAtTime(0.0, now + idx * 0.08);
-          gain.gain.linearRampToValueAtTime(0.06, now + idx * 0.08 + 0.02);
-          gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.08 + 0.25);
-          
-          osc.connect(gain);
-          gain.connect(this.ctx.destination);
-          
-          osc.start(now + idx * 0.08);
-          osc.stop(now + idx * 0.08 + 0.25);
-        });
-      }
-
-      playWarning() {
-        this.init();
-        if (!this.ctx) return;
-        
-        const now = this.ctx.currentTime;
-        const notes = [659.25, 554.37];
-        
-        notes.forEach((freq, idx) => {
-          const osc = this.ctx.createOscillator();
-          const gain = this.ctx.createGain();
-          
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(freq, now + idx * 0.15);
-          
-          gain.gain.setValueAtTime(0.0, now + idx * 0.15);
-          gain.gain.linearRampToValueAtTime(0.05, now + idx * 0.15 + 0.03);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.15 + 0.25);
-          
-          osc.connect(gain);
-          gain.connect(this.ctx.destination);
-          
-          osc.start(now + idx * 0.15);
-          osc.stop(now + idx * 0.15 + 0.25);
-        });
-      }
-    }
-
-    const sound = new AudioEngine();
+    // Audio Engine is removed completely (Absolute Silence)
+    const sound = {
+      playTick: () => {},
+      playClick: () => {},
+      playSuccess: () => {},
+      playWarning: () => {}
+    };
 
     // Default 80 training coordinates for standalone Serverless Fallback mode (Battery)
     const DEFAULT_BATTERY_COORDINATES = [
@@ -1774,13 +1712,36 @@
       {screen_time: 9.9, battery_percent: 14.1}, {screen_time: 10.0, battery_percent: 14.4}
     ];
 
-    // Default 7 training coordinates for Salary model fallback
-    const DEFAULT_SALARY_COORDINATES = [
-      {experience: 1.0, salary: 20000}, {experience: 2.0, salary: 45000},
-      {experience: 3.0, salary: 67890}, {experience: 4.0, salary: 82290},
-      {experience: 5.0, salary: 89820}, {experience: 6.0, salary: 93083},
-      {experience: 7.0, salary: 99999}
-    ];
+    // Default Salary Presets for sub-workspace
+    const SALARY_PRESETS = {
+      corporate: [
+        { experience: 1.0, salary: 20000 },
+        { experience: 2.0, salary: 45000 },
+        { experience: 3.0, salary: 67890 },
+        { experience: 4.0, salary: 82290 },
+        { experience: 5.0, salary: 89820 },
+        { experience: 6.0, salary: 93083 },
+        { experience: 7.0, salary: 99999 }
+      ],
+      tech: [
+        { experience: 1.0, salary: 35000 },
+        { experience: 2.0, salary: 58000 },
+        { experience: 3.0, salary: 82000 },
+        { experience: 4.0, salary: 105000 },
+        { experience: 5.0, salary: 125000 },
+        { experience: 6.0, salary: 145000 },
+        { experience: 7.0, salary: 170000 }
+      ],
+      noisy: [
+        { experience: 1.0, salary: 15000 },
+        { experience: 2.0, salary: 65000 },
+        { experience: 3.0, salary: 30000 },
+        { experience: 4.0, salary: 95000 },
+        { experience: 5.0, salary: 45000 },
+        { experience: 6.0, salary: 110000 },
+        { experience: 7.0, salary: 85000 }
+      ]
+    };
 
     // Default 20 training coordinates for Income model fallback
     const DEFAULT_INCOME_COORDINATES = [
@@ -1800,42 +1761,6 @@
     let activeMainTab = "simple"; // "simple" or "multiple"
     let activePredictor = "battery"; // "battery", "salary", or "income"
     let isServerless = false;
-
-    // Default Salary Presets for sub-workspace
-    const SALARY_PRESETS = {
-      corporate: [
-        { x: 1.0, y: 20000 },
-        { x: 2.0, y: 45000 },
-        { x: 3.0, y: 67890 },
-        { x: 4.0, y: 82290 },
-        { x: 5.0, y: 89820 },
-        { x: 6.0, y: 93083 },
-        { x: 7.0, y: 99999 }
-      ],
-      tech: [
-        { x: 1.0, y: 35000 },
-        { x: 2.0, y: 58000 },
-        { x: 3.0, y: 82000 },
-        { x: 4.0, y: 105000 },
-        { x: 5.0, y: 125000 },
-        { x: 6.0, y: 145000 },
-        { x: 7.0, y: 170000 }
-      ],
-      noisy: [
-        { x: 1.0, y: 15000 },
-        { x: 2.0, y: 65000 },
-        { x: 3.0, y: 30000 },
-        { x: 4.0, y: 95000 },
-        { x: 5.0, y: 45000 },
-        { x: 6.0, y: 110000 },
-        { x: 7.0, y: 85000 }
-      ]
-    };
-
-    let salaryDataset = JSON.parse(JSON.stringify(SALARY_PRESETS.corporate));
-    let salaryPreset = 'corporate';
-    let salaryModel = { m: 0, c: 0, r2: 0, avgX: 0, avgY: 0, n: 0 };
-    let salaryChart = null;
 
     // Model variables (Battery)
     let currentBatterySot = 5.0;
@@ -1911,12 +1836,11 @@
           if (val !== currentBatterySot) {
             currentBatterySot = val;
             document.getElementById('battery-sot-slider-control').value = val;
+            document.getElementById('battery-sot-numeric-box').value = val;
             document.getElementById('graph-sweep-slider').value = val;
-            document.getElementById('battery-sot-display-val').innerHTML = val.toFixed(1) + '<span>hrs</span>';
             document.getElementById('graph-sweep-display').innerHTML = val.toFixed(1) + '<span>hrs</span>';
             phoneReadoutSot.textContent = `Active: ${val.toFixed(1)} hrs`;
             
-            if (Math.round(val * 10) % 5 === 0) sound.playTick();
             triggerPrediction();
           }
         }
@@ -1929,7 +1853,6 @@
     // Symmetrical navigation switches
     function switchMainTab(tab) {
       if (activeMainTab === tab) return;
-      sound.playClick();
       activeMainTab = tab;
       
       document.getElementById('tab-simple').classList.toggle('active', tab === 'simple');
@@ -1946,7 +1869,6 @@
 
     function switchSubPredictor(predictor) {
       if (activePredictor === predictor && activeMainTab !== 'multiple') return;
-      sound.playClick();
       activePredictor = predictor;
 
       // Toggle active states for sub-nav buttons
@@ -2006,40 +1928,63 @@
         }
       }
 
-      if (predictor === 'salary') {
-        trainSalaryModelLocal();
-        renderSalaryTable();
-        renderSalaryChart();
-        updateSalaryPredictorOutputs();
-      } else {
-        // Re-fetch and render state
-        syncDatasetState(predictor);
-      }
+      // Re-fetch and render state
+      syncDatasetState(predictor);
     }
 
-    // Connect slider input readouts
-    function handleSliderInput(slider, type) {
-      sound.playTick();
+    // Bidirectional Synced Sliders & Numbers Box mapping
+    function handleSyncedSliderInput(modelType, slider) {
       const val = parseFloat(slider.value);
       
-      if (type === 'battery') {
+      if (modelType === 'battery') {
         currentBatterySot = val;
-        document.getElementById('battery-sot-display-val').innerHTML = val.toFixed(1) + '<span>hrs</span>';
+        document.getElementById('battery-sot-numeric-box').value = val.toFixed(1);
         document.getElementById('graph-sweep-slider').value = val;
         document.getElementById('graph-sweep-display').innerHTML = val.toFixed(1) + '<span>hrs</span>';
         phoneReadoutSot.textContent = `Active: ${val.toFixed(1)} hrs`;
-      } else if (type === 'salary') {
+      } else if (modelType === 'salary') {
         currentSalaryExp = val;
-        document.getElementById('salary-exp-display-val').innerHTML = val.toFixed(1) + '<span>yrs</span>';
+        document.getElementById('salary-exp-numeric-box').value = val.toFixed(1);
         document.getElementById('graph-sweep-slider').value = val;
         document.getElementById('graph-sweep-display').innerHTML = val.toFixed(1) + '<span>yrs</span>';
         paycheckReadoutExp.textContent = `${val.toFixed(1)} Years`;
-      } else if (type === 'income-age') {
+      } else if (modelType === 'income-age') {
         currentIncomeAge = val;
-        document.getElementById('income-age-display-val').innerHTML = val + '<span>yrs</span>';
-      } else if (type === 'income-exp') {
+        document.getElementById('income-age-numeric-box').value = val;
+      } else if (modelType === 'income-exp') {
         currentIncomeExp = val;
-        document.getElementById('income-exp-display-val').innerHTML = val.toFixed(1) + '<span>yrs</span>';
+        document.getElementById('income-exp-numeric-box').value = val.toFixed(1);
+      }
+
+      triggerPrediction();
+    }
+
+    function handleSyncedNumberInput(modelType, numBox) {
+      let val = parseFloat(numBox.value);
+      if (isNaN(val)) return;
+      
+      if (modelType === 'battery') {
+        val = Math.max(0, Math.min(12, val));
+        currentBatterySot = val;
+        document.getElementById('battery-sot-slider-control').value = val;
+        document.getElementById('graph-sweep-slider').value = val;
+        document.getElementById('graph-sweep-display').innerHTML = val.toFixed(1) + '<span>hrs</span>';
+        phoneReadoutSot.textContent = `Active: ${val.toFixed(1)} hrs`;
+      } else if (modelType === 'salary') {
+        val = Math.max(0, Math.min(15, val));
+        currentSalaryExp = val;
+        document.getElementById('salary-exp-slider-control').value = val;
+        document.getElementById('graph-sweep-slider').value = val;
+        document.getElementById('graph-sweep-display').innerHTML = val.toFixed(1) + '<span>yrs</span>';
+        paycheckReadoutExp.textContent = `${val.toFixed(1)} Years`;
+      } else if (modelType === 'income-age') {
+        val = Math.max(20, Math.min(60, val));
+        currentIncomeAge = val;
+        document.getElementById('income-age-slider-control').value = val;
+      } else if (modelType === 'income-exp') {
+        val = Math.max(0, Math.min(20, val));
+        currentIncomeExp = val;
+        document.getElementById('income-exp-slider-control').value = val;
       }
 
       triggerPrediction();
@@ -2047,19 +1992,18 @@
 
     // Sweep graph slider synchronization
     function handleSweepSliderInput(slider) {
-      sound.playTick();
       const val = parseFloat(slider.value);
       
       if (activePredictor === 'battery') {
         currentBatterySot = val;
         document.getElementById('battery-sot-slider-control').value = val;
-        document.getElementById('battery-sot-display-val').innerHTML = val.toFixed(1) + '<span>hrs</span>';
+        document.getElementById('battery-sot-numeric-box').value = val.toFixed(1);
         document.getElementById('graph-sweep-display').innerHTML = val.toFixed(1) + '<span>hrs</span>';
         phoneReadoutSot.textContent = `Active: ${val.toFixed(1)} hrs`;
       } else if (activePredictor === 'salary') {
         currentSalaryExp = val;
         document.getElementById('salary-exp-slider-control').value = val;
-        document.getElementById('salary-exp-display-val').innerHTML = val.toFixed(1) + '<span>yrs</span>';
+        document.getElementById('salary-exp-numeric-box').value = val.toFixed(1);
         document.getElementById('graph-sweep-display').innerHTML = val.toFixed(1) + '<span>yrs</span>';
         paycheckReadoutExp.textContent = `${val.toFixed(1)} Years`;
       }
@@ -2092,14 +2036,12 @@
 
     // Toggle scroll draining mode
     function toggleScrollCouple() {
-      sound.playClick();
       scrollCouple = !scrollCouple;
       document.getElementById('scroll-toggle-box').classList.toggle('active', scrollCouple);
     }
 
     // Hardware modifiers overrides
     function toggleRefreshHz() {
-      sound.playClick();
       if (refreshRateMultiplier === 1.0) {
         refreshRateMultiplier = 1.25;
         document.getElementById('hz-toggle-box').classList.add('active');
@@ -2111,7 +2053,6 @@
     }
 
     function toggleOledMode() {
-      sound.playClick();
       if (darkModeMultiplier === 1.0) {
         darkModeMultiplier = 0.82;
         document.getElementById('oled-toggle-box').classList.add('active');
@@ -2121,6 +2062,29 @@
         document.getElementById('oled-toggle-box').classList.remove('active');
         phoneScreen.classList.remove('phone-dark-screen');
       }
+      triggerPrediction();
+    }
+
+    // Salary preset switcher
+    function handleSalaryPresetChange(select) {
+      const preset = select.value;
+      if (isServerless) {
+        coordinates = JSON.parse(JSON.stringify(SALARY_PRESETS[preset]));
+        metrics = trainSimpleModelJS('experience', 'salary');
+        updateMetricsHUD();
+        buildCoordinatesTableHTML();
+        renderThreeCharts();
+        triggerPrediction();
+        return;
+      }
+      
+      // If live, we reset and post presets
+      // To keep preset logic extremely fast and consistent, we can just load local coordinates and push them
+      coordinates = JSON.parse(JSON.stringify(SALARY_PRESETS[preset]));
+      metrics = trainSimpleModelJS('experience', 'salary');
+      updateMetricsHUD();
+      buildCoordinatesTableHTML();
+      renderThreeCharts();
       triggerPrediction();
     }
 
@@ -2148,6 +2112,7 @@
         .then(met => {
           metrics = met;
           updateMetricsHUD();
+          buildCoordinatesTableHTML();
           if (modelName !== 'income') {
             renderThreeCharts();
           } else {
@@ -2173,16 +2138,20 @@
         coordinates = JSON.parse(JSON.stringify(DEFAULT_BATTERY_COORDINATES));
         metrics = trainSimpleModelJS('screen_time', 'battery_percent');
         updateMetricsHUD();
+        buildCoordinatesTableHTML();
         renderThreeCharts();
       } else if (modelName === 'salary') {
-        coordinates = JSON.parse(JSON.stringify(DEFAULT_SALARY_COORDINATES));
+        const activePreset = document.getElementById('salary-preset-select').value;
+        coordinates = JSON.parse(JSON.stringify(SALARY_PRESETS[activePreset]));
         metrics = trainSimpleModelJS('experience', 'salary');
         updateMetricsHUD();
+        buildCoordinatesTableHTML();
         renderThreeCharts();
       } else if (modelName === 'income') {
         coordinates = JSON.parse(JSON.stringify(DEFAULT_INCOME_COORDINATES));
         metrics = trainMultipleModelJS();
         updateMetricsHUD();
+        buildCoordinatesTableHTML();
         renderPlotly3D();
       }
       triggerPrediction();
@@ -2322,7 +2291,26 @@
       } 
       
       else if (activePredictor === 'salary') {
-        updateSalaryPredictorOutputs();
+        if (isServerless) {
+          predictedSalary = Math.max(0.0, metrics.slope[0] * currentSalaryExp + metrics.intercept);
+          updateSalaryVisuals(predictedSalary);
+          updateSalaryChartsTarget();
+          return;
+        }
+
+        const payload = { experience: currentSalaryExp };
+
+        fetch('/api/salary/predict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        })
+        .then(res => res.json())
+        .then(result => {
+          predictedSalary = result.predicted_val;
+          updateSalaryVisuals(predictedSalary);
+          updateSalaryChartsTarget();
+        });
       } 
       
       else if (activePredictor === 'income') {
@@ -2374,7 +2362,6 @@
       } else {
         reactiveColor = 'var(--pastel-red)';
         if (!hasAlertedLowPower) {
-          sound.playWarning();
           hasAlertedLowPower = true;
           lowPowerNotificationText.textContent = `Battery is critically low (${roundedPercent}%). Extreme thermal throttling active.`;
           lowPowerNotification.classList.add('show');
@@ -2425,24 +2412,21 @@
     }
 
     function updateSalaryChartsTarget() {
-      const diff = 0; // Simple linear has no settings modifiers to scale predicted salary
-
       if (chartRemainingInst) {
         chartRemainingInst.data.datasets[2].data = [{ x: currentSalaryExp, y: predictedSalary }];
         chartRemainingInst.update('none');
       }
       if (chartConsumedInst) {
-        // weekly representation target
         chartConsumedInst.data.datasets[2].data = [{ x: currentSalaryExp, y: predictedSalary / 52 }];
         chartConsumedInst.update('none');
       }
       if (chartResidualsInst) {
-        chartResidualsInst.data.datasets[2].data = [{ x: currentSalaryExp, y: diff }];
+        chartResidualsInst.data.datasets[2].data = [{ x: currentSalaryExp, y: 0 }];
         chartResidualsInst.update('none');
       }
     }
 
-    // Render Metrics formula text
+    // Render Metrics formula text & Multiple Regression Insights box
     function updateMetricsHUD() {
       metricsR2.textContent = metrics.r2.toFixed(3);
       metricsIntercept.textContent = metrics.intercept.toLocaleString(undefined, {maximumFractionDigits: 1}) + (activePredictor === 'battery' ? '%' : '');
@@ -2455,8 +2439,75 @@
         metricsSlope.textContent = '$' + metrics.slope[0].toFixed(0);
         metricsFormula.textContent = `Salary = $${metrics.slope[0].toFixed(0)} * Exp + $${metrics.intercept.toFixed(0)}`;
       } else if (activePredictor === 'income') {
-        metricsSlope.textContent = `Age: $${metrics.slope[0].toFixed(0)} / Exp: $${metrics.slope[1].toFixed(0)}`;
-        metricsFormula.textContent = `Income = $${metrics.slope[0].toFixed(0)}*Age + $${metrics.slope[1].toFixed(0)}*Exp + $${metrics.intercept.toFixed(0)}`;
+        // Update Multiple Regression Insights box formulas
+        document.getElementById('income-formula-math-display').innerHTML = `Income = <span style="color:var(--pastel-blue); font-weight:700;">$${metrics.slope[0].toFixed(0)}</span> * Age + <span style="color:var(--pastel-blue); font-weight:700;">$${metrics.slope[1].toFixed(0)}</span> * Exp + <span style="color:var(--pastel-blue); font-weight:700;">$${metrics.intercept.toFixed(0)}</span>`;
+        document.getElementById('income-r2-display').textContent = metrics.r2.toFixed(3);
+        document.getElementById('income-w1-display').textContent = '$' + metrics.slope[0].toFixed(0);
+        document.getElementById('income-w2-display').textContent = '$' + metrics.slope[1].toFixed(0);
+        document.getElementById('income-intercept-display').textContent = '$' + metrics.intercept.toFixed(0);
+      }
+    }
+
+    // Build scrollable coordinates tables inside controller panels
+    function buildCoordinatesTableHTML() {
+      if (activePredictor === 'battery') {
+        const tbody = document.getElementById('battery-table-body');
+        tbody.innerHTML = '';
+        coordinates.forEach((p, idx) => {
+          tbody.innerHTML += `
+            <tr>
+              <td>${p.screen_time.toFixed(1)} hrs</td>
+              <td>${p.battery_percent.toFixed(1)}%</td>
+              <td>
+                <button class="btn-delete" onclick="deletePoint(${idx})" title="Delete Point">
+                  <svg class="trash-icon-svg" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                  </svg>
+                </button>
+              </td>
+            </tr>
+          `;
+        });
+      } else if (activePredictor === 'salary') {
+        const tbody = document.getElementById('salary-table-body');
+        tbody.innerHTML = '';
+        coordinates.forEach((p, idx) => {
+          tbody.innerHTML += `
+            <tr>
+              <td>${p.experience.toFixed(1)} Yrs</td>
+              <td>$${p.salary.toLocaleString()}</td>
+              <td>
+                <button class="btn-delete" onclick="deletePoint(${idx})" title="Delete Point">
+                  <svg class="trash-icon-svg" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                  </svg>
+                </button>
+              </td>
+            </tr>
+          `;
+        });
+      } else if (activePredictor === 'income') {
+        const tbody = document.getElementById('income-table-body');
+        tbody.innerHTML = '';
+        coordinates.forEach((p, idx) => {
+          tbody.innerHTML += `
+            <tr>
+              <td>${p.age} Yrs</td>
+              <td>${p.experience.toFixed(1)} Yrs</td>
+              <td>$${p.income.toLocaleString()}</td>
+              <td>
+                <button class="btn-delete" onclick="deletePoint(${idx})" title="Delete Point">
+                  <svg class="trash-icon-svg" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                  </svg>
+                </button>
+              </td>
+            </tr>
+          `;
+        });
       }
     }
 
@@ -2475,10 +2526,10 @@
         payload = { screen_time: timeVal, battery_percent: percentVal };
 
         if (isServerless) {
-          sound.playSuccess();
           coordinates.push({ screen_time: timeVal, battery_percent: percentVal });
           metrics = trainSimpleModelJS('screen_time', 'battery_percent');
           updateMetricsHUD();
+          buildCoordinatesTableHTML();
           renderThreeCharts();
           triggerRetrainAnimation();
           timeInput.value = ''; percentInput.value = '';
@@ -2497,10 +2548,10 @@
         payload = { experience: expVal, salary: salVal };
 
         if (isServerless) {
-          sound.playSuccess();
           coordinates.push({ experience: expVal, salary: salVal });
           metrics = trainSimpleModelJS('experience', 'salary');
           updateMetricsHUD();
+          buildCoordinatesTableHTML();
           renderThreeCharts();
           triggerRetrainAnimation();
           expInput.value = ''; valInput.value = '';
@@ -2521,10 +2572,10 @@
         payload = { age: ageVal, experience: expVal, income: incVal };
 
         if (isServerless) {
-          sound.playSuccess();
           coordinates.push({ age: ageVal, experience: expVal, income: incVal });
           metrics = trainMultipleModelJS();
           updateMetricsHUD();
+          buildCoordinatesTableHTML();
           renderPlotly3D();
           triggerRetrainAnimation();
           ageInput.value = ''; expInput.value = ''; valInput.value = '';
@@ -2545,13 +2596,43 @@
         return res.json();
       })
       .then(() => {
-        sound.playSuccess();
         document.querySelectorAll('form').forEach(f => f.reset());
         triggerRetrainAnimation();
         syncDatasetState(type);
       })
       .catch(err => {
         alert(err.message || "Failed to submit coordinates.");
+      });
+    }
+
+    // Delete coordinate index point
+    function deletePoint(idx) {
+      if (isServerless) {
+        coordinates.splice(idx, 1);
+        if (activePredictor === 'battery') {
+          metrics = trainSimpleModelJS('screen_time', 'battery_percent');
+          renderThreeCharts();
+        } else if (activePredictor === 'salary') {
+          metrics = trainSimpleModelJS('experience', 'salary');
+          renderThreeCharts();
+        } else if (activePredictor === 'income') {
+          metrics = trainMultipleModelJS();
+          renderPlotly3D();
+        }
+        updateMetricsHUD();
+        buildCoordinatesTableHTML();
+        triggerPrediction();
+        return;
+      }
+
+      fetch(`/api/${activePredictor}/delete`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ index: idx })
+      })
+      .then(res => res.json())
+      .then(() => {
+        syncDatasetState(activePredictor);
       });
     }
 
@@ -2565,7 +2646,6 @@
     // Reset Database
     function resetDataset(type) {
       if (isServerless) {
-        sound.playSuccess();
         runServerlessMode(type);
         return;
       }
@@ -2573,9 +2653,28 @@
       fetch(`/api/${type}/reset`, { method: 'POST' })
         .then(res => res.json())
         .then(() => {
-          sound.playSuccess();
           syncDatasetState(type);
         });
+    }
+
+    // Set inputs to mean of active dataset
+    function useActiveDatasetMean() {
+      if (coordinates.length === 0) return;
+      
+      let sumAge = 0, sumExp = 0;
+      coordinates.forEach(c => { sumAge += c.age; sumExp += c.experience; });
+      const meanAge = Math.round(sumAge / coordinates.length);
+      const meanExp = parseFloat((sumExp / coordinates.length).toFixed(1));
+      
+      currentIncomeAge = meanAge;
+      currentIncomeExp = meanExp;
+      
+      document.getElementById('income-age-slider-control').value = meanAge;
+      document.getElementById('income-age-numeric-box').value = meanAge;
+      document.getElementById('income-exp-slider-control').value = meanExp;
+      document.getElementById('income-exp-numeric-box').value = meanExp;
+
+      triggerPrediction();
     }
 
     // Render Symmetrical 2D plots
@@ -2622,7 +2721,6 @@
         ];
         target1 = [{ x: currentSalaryExp, y: predictedSalary }];
 
-        // Weekly salary representation (Annual / 52)
         scatter2 = coordinates.map(p => ({ x: p.experience, y: p.salary / 52 }));
         line2 = [
           { x: minX, y: Math.max(0, metrics.intercept / 52) },
@@ -2669,7 +2767,6 @@
       const scatterBgColor = activePredictor === 'battery' ? 'rgba(125, 196, 144, 0.65)' : 'rgba(195, 178, 229, 0.65)';
       const scatterBorderColor = activePredictor === 'battery' ? 'rgba(125, 196, 144, 0.9)' : 'rgba(195, 178, 229, 0.9)';
 
-      // Chart 1: Remaining Capacity / Annual Salary
       chartRemainingInst = new Chart(remainingCtx, {
         type: 'line',
         data: {
@@ -2682,7 +2779,6 @@
         options: getCommonOptions(activePredictor === 'battery' ? 'Battery Remaining %' : 'Annual Salary ($)', 0, activePredictor === 'battery' ? 100 : 120000)
       });
 
-      // Chart 2: Consumed Battery / Weekly Compensation
       chartConsumedInst = new Chart(consumedCtx, {
         type: 'line',
         data: {
@@ -2695,7 +2791,6 @@
         options: getCommonOptions(activePredictor === 'battery' ? 'Battery Consumed %' : 'Weekly Salary ($)', 0, activePredictor === 'battery' ? 100 : 2500)
       });
 
-      // Chart 3: Prediction Variance
       chartResidualsInst = new Chart(residualsCtx, {
         type: 'line',
         data: {
@@ -2714,7 +2809,6 @@
       const container = document.getElementById('plotlyIncome3d');
       if (!container) return;
 
-      // 1. Coordinates scatter trace
       const scatterTrace = {
         x: coordinates.map(p => p.age),
         y: coordinates.map(p => p.experience),
@@ -2730,7 +2824,6 @@
         name: 'Actual Income Data'
       };
 
-      // 2. Linear Regression 3D Plane Mesh calculation
       const gridAge = [];
       for (let i = 0; i < 10; i++) gridAge.push(20 + (60 - 20) * i / 9);
 
@@ -2758,7 +2851,6 @@
         name: 'Regression Plane'
       };
 
-      // 3. User configuration indicator ball
       const activeTrace = {
         x: [currentIncomeAge],
         y: [currentIncomeExp],
@@ -2793,7 +2885,6 @@
       const container = document.getElementById('plotlyIncome3d');
       if (!container || !container.data) return;
 
-      // Update active trace dataset coordinates (trace index 2)
       const updateData = {
         x: [[currentIncomeAge]],
         y: [[currentIncomeExp]],
@@ -2801,232 +2892,6 @@
       };
       
       Plotly.restyle(container, updateData, [2]);
-    }
-
-    // ==================== SALARY PREDICTOR HELPER FUNCTIONS ====================
-    function trainSalaryModelLocal() {
-      const n = salaryDataset.length;
-      if (n === 0) {
-        salaryModel = { m: 0, c: 0, r2: 0, avgX: 0, avgY: 0, n: 0 };
-        return;
-      }
-      if (n === 1) {
-        salaryModel = { m: 0, c: salaryDataset[0].y, r2: 1, avgX: salaryDataset[0].x, avgY: salaryDataset[0].y, n: 1 };
-        return;
-      }
-      let sumX = 0, sumY = 0;
-      for (let i = 0; i < n; i++) {
-        sumX += salaryDataset[i].x;
-        sumY += salaryDataset[i].y;
-      }
-      const avgX = sumX / n;
-      const avgY = sumY / n;
-      
-      let ssXX = 0, ssYY = 0, ssXY = 0;
-      for (let i = 0; i < n; i++) {
-        const diffX = salaryDataset[i].x - avgX;
-        const diffY = salaryDataset[i].y - avgY;
-        ssXX += diffX * diffX;
-        ssYY += diffY * diffY;
-        ssXY += diffX * diffY;
-      }
-      const m = ssXX === 0 ? 0 : ssXY / ssXX;
-      const c = avgY - m * avgX;
-      
-      let sumSqErr = 0, sumSqTot = 0;
-      for (let i = 0; i < n; i++) {
-        const pred = m * salaryDataset[i].x + c;
-        const err = salaryDataset[i].y - pred;
-        const dev = salaryDataset[i].y - avgY;
-        sumSqErr += err * err;
-        sumSqTot += dev * dev;
-      }
-      const r2 = sumSqTot === 0 ? 1 : 1 - (sumSqErr / sumSqTot);
-      
-      salaryModel = { m, c, r2, avgX, avgY, n };
-    }
-
-    function updateSalaryPredictorOutputs() {
-      const pred = Math.max(0, salaryModel.m * currentSalaryExp + salaryModel.c);
-      predictedSalary = pred;
-
-      // Update Sandbox Card expected salary readout
-      document.getElementById('salary-value-num').textContent = Math.round(pred).toLocaleString();
-      document.getElementById('salary-value-info').textContent = `At ${currentSalaryExp.toFixed(1)} years of experience`;
-
-      // Update Paycheck Card Mockup
-      if (paycheckReadoutSalary) paycheckReadoutSalary.textContent = `$${Math.round(pred).toLocaleString()}`;
-      if (paycheckReadoutExp) paycheckReadoutExp.textContent = `${currentSalaryExp.toFixed(1)} Years`;
-      if (paycheckReadoutWeekly) paycheckReadoutWeekly.textContent = `$${Math.round(pred / 52).toLocaleString()}`;
-      
-      const percentile = Math.min(100, Math.round((pred / 120000) * 100));
-      if (paycheckPercentileLabel) paycheckPercentileLabel.textContent = `${percentile}%`;
-      if (paycheckProgressFill) paycheckProgressFill.style.width = `${percentile}%`;
-
-      // Update Insights Card
-      document.getElementById('salary-formula-math').innerHTML = `Salary = <span class="highlight" style="color: #e5c158; font-weight: 700;">$${salaryModel.m.toFixed(0)}</span> * Exp + <span class="highlight" style="color: #e5c158; font-weight: 700;">$${salaryModel.c.toFixed(0)}</span>`;
-      document.getElementById('salary-r2-val').textContent = salaryModel.r2.toFixed(3);
-      document.getElementById('salary-slope-val').textContent = '$' + salaryModel.m.toFixed(0);
-      document.getElementById('salary-intercept-val').textContent = '$' + salaryModel.c.toFixed(0);
-      document.getElementById('salary-samples-val').textContent = salaryModel.n;
-
-      const r2 = salaryModel.r2;
-      const desc = document.getElementById('salary-r2-desc');
-      if (r2 > 0.9) desc.textContent = "Excellent fit";
-      else if (r2 > 0.6) desc.textContent = "Moderate fit";
-      else desc.textContent = "Weak fit";
-
-      document.getElementById('salary-insights-text-desc').innerHTML = `Positive slope showing <strong>$${salaryModel.m.toFixed(0)}</strong> base salary growth per year of experience.`;
-
-      // Update target point in the dedicated line chart
-      if (salaryChart) {
-        salaryChart.data.datasets[2].data = [{ x: currentSalaryExp, y: predictedSalary }];
-        salaryChart.update('none');
-      }
-    }
-
-    function renderSalaryChart() {
-      const ctx = document.getElementById('salary-regression-chart-canvas').getContext('2d');
-      
-      const minX = 0, maxX = 15;
-      const scatterPoints = salaryDataset.map(p => ({ x: p.x, y: p.y }));
-      const linePoints = [
-        { x: minX, y: Math.max(0, salaryModel.c) },
-        { x: maxX, y: Math.max(0, salaryModel.m * maxX + salaryModel.c) }
-      ];
-      const targetPoint = [{ x: currentSalaryExp, y: predictedSalary }];
-
-      if (salaryChart) salaryChart.destroy();
-
-      salaryChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-          datasets: [
-            { label: 'Coordinates', data: scatterPoints, type: 'scatter', showLine: false, backgroundColor: 'rgba(229, 193, 88, 0.25)', borderColor: 'rgba(229, 193, 88, 0.8)', borderWidth: 1, pointRadius: 4.5, pointHoverRadius: 6.5 },
-            { label: 'Regression Line', data: linePoints, type: 'line', showLine: true, borderColor: '#e5c158', borderWidth: 4, fill: false, pointRadius: 0 },
-            { label: 'Current Target', data: targetPoint, type: 'scatter', showLine: false, backgroundColor: '#f2aa6b', borderColor: '#ffffff', borderWidth: 2, pointRadius: 8.5, pointHoverRadius: 10.5, z: 20 }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          animation: { duration: 400 },
-          plugins: { legend: { display: false } },
-          scales: {
-            x: { type: 'linear', position: 'bottom', grid: { color: 'rgba(0, 0, 0, 0.03)' }, ticks: { color: '#6c757d', font: { family: 'Outfit', size: 10 } }, min: minX, max: maxX },
-            y: { title: { display: true, text: 'Salary ($)', color: '#6c757d', font: { family: 'Outfit', size: 10, weight: '600' } }, grid: { color: 'rgba(0, 0, 0, 0.03)' }, ticks: { color: '#6c757d', font: { family: 'Outfit', size: 10 } }, min: 0, max: 120000 }
-          }
-        }
-      });
-    }
-
-    function renderSalaryTable() {
-      const tbody = document.getElementById('salary-table-body-rows');
-      if (!tbody) return;
-      tbody.innerHTML = '';
-      
-      salaryDataset.forEach((p, idx) => {
-        tbody.innerHTML += `
-          <tr>
-            <td style="padding: 10px;">${p.x.toFixed(1)} Yrs</td>
-            <td style="padding: 10px;">$${p.y.toLocaleString()}</td>
-            <td style="padding: 10px; text-align: center;">
-              <button class="btn-delete" onclick="deleteSalaryPoint(${idx})" title="Delete Point">
-                <svg class="trash-icon-svg" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px; height:14px; fill:none;">
-                  <polyline points="3 6 5 6 21 6"></polyline>
-                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                </svg>
-              </button>
-            </td>
-          </tr>
-        `;
-      });
-    }
-
-    function handleSalaryExpSlider(slider) {
-      sound.playTick();
-      const val = parseFloat(slider.value);
-      currentSalaryExp = val;
-      document.getElementById('salary-numeric-val-input').value = val.toFixed(1);
-      updateSalaryPredictorOutputs();
-    }
-
-    // Connect synced number input box -> slider
-    function handleSalaryExpNumericBox(input) {
-      let val = parseFloat(input.value);
-      if (isNaN(val)) return;
-      val = Math.max(0, Math.min(15, val));
-      currentSalaryExp = val;
-      document.getElementById('salary-slider-control-input').value = val;
-      updateSalaryPredictorOutputs();
-    }
-
-    function resetSalarySlider() {
-      sound.playClick();
-      currentSalaryExp = 5.0;
-      document.getElementById('salary-slider-control-input').value = 5.0;
-      document.getElementById('salary-numeric-val-input').value = '5.0';
-      updateSalaryPredictorOutputs();
-    }
-
-    function useSalaryMeanExp() {
-      sound.playClick();
-      const mean = parseFloat(salaryModel.avgX.toFixed(1));
-      currentSalaryExp = mean;
-      document.getElementById('salary-slider-control-input').value = mean;
-      document.getElementById('salary-numeric-val-input').value = mean.toFixed(1);
-      updateSalaryPredictorOutputs();
-    }
-
-    function handleSalaryPresetChange(select) {
-      sound.playClick();
-      salaryPreset = select.value;
-      salaryDataset = JSON.parse(JSON.stringify(SALARY_PRESETS[salaryPreset]));
-      trainSalaryModelLocal();
-      renderSalaryTable();
-      renderSalaryChart();
-      updateSalaryPredictorOutputs();
-    }
-
-    function handleSalaryTableAddSubmit(event) {
-      event.preventDefault();
-      const expInput = document.getElementById('salary-add-exp');
-      const valInput = document.getElementById('salary-add-salary');
-      const expVal = parseFloat(expInput.value);
-      const salVal = parseFloat(valInput.value);
-      
-      if (isNaN(expVal) || isNaN(salVal)) return;
-      
-      sound.playSuccess();
-      salaryDataset.push({ x: expVal, y: salVal });
-      
-      trainSalaryModelLocal();
-      renderSalaryTable();
-      renderSalaryChart();
-      updateSalaryPredictorOutputs();
-      
-      expInput.value = '';
-      valInput.value = '';
-    }
-
-    function deleteSalaryPoint(idx) {
-      sound.playClick();
-      salaryDataset.splice(idx, 1);
-      trainSalaryModelLocal();
-      renderSalaryTable();
-      renderSalaryChart();
-      updateSalaryPredictorOutputs();
-    }
-
-    function restoreSalaryDatasetDefaults(event) {
-      if (event) event.preventDefault();
-      sound.playSuccess();
-      salaryDataset = JSON.parse(JSON.stringify(SALARY_PRESETS.corporate));
-      document.getElementById('salary-preset-select').value = 'corporate';
-      trainSalaryModelLocal();
-      renderSalaryTable();
-      renderSalaryChart();
-      updateSalaryPredictorOutputs();
     }
   </script>
 </body>
