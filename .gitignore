@@ -8,7 +8,7 @@ __pycache__/
 */.ipynb_checkpoints/
 
 # Local custom data persistence (prevents committing test data coordinates)
-Mobile_Battery_Life_Prediction_Dataset_Custom.csv
+*_Custom.csv
 
 # OS-specific files
 .DS_Store
