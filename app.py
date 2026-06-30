@@ -240,6 +240,21 @@ def predict(model_name: str, req: PredictionRequest):
             "predicted_val": pred_val
         }
 
+class DeleteRequest(BaseModel):
+    index: int
+
+@app.post("/api/{model_name}/delete")
+def delete_data(model_name: str, req: DeleteRequest):
+    if model_name not in models_state:
+        raise HTTPException(status_code=400, detail="Invalid model name")
+    df = load_dataset(model_name)
+    if req.index < 0 or req.index >= len(df):
+        raise HTTPException(status_code=400, detail="Invalid index")
+    df = df.drop(df.index[req.index]).reset_index(drop=True)
+    df.to_csv(models_state[model_name]["custom_csv"], index=False)
+    train_model(model_name)
+    return {"status": "success", "metrics": models_state[model_name]["metrics"]}
+
 @app.post("/api/{model_name}/reset")
 def reset_dataset(model_name: str):
     if model_name not in models_state:
