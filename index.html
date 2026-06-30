@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="en" style="scroll-behavior: smooth;">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>VoltAI - Unified Machine Learning Sandbox</title>
   
-  <!-- Google Fonts -->
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   
   <!-- Chart.js for 2D Plots -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -17,718 +17,686 @@
   <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
 
   <style>
-    /* -------------------------------------------------------------
-     * Custom Stylesheet for Unified ML Sandbox (Pastel Glassmorphism)
-     * ------------------------------------------------------------- */
-
+    /* Design Tokens - Refreshing Pastel Theme */
     :root {
-      --font-headers: 'Space Grotesk', sans-serif;
-      --font-body: 'Outfit', sans-serif;
-
-      /* Premium Pastel Palette */
-      --bg-gradient: linear-gradient(135deg, #f5f3ff 0%, #ecfeff 50%, #fff7ed 100%);
-      --glass-bg: rgba(255, 255, 255, 0.55);
-      --glass-border: rgba(255, 255, 255, 0.7);
-      --glass-shadow: 0 10px 40px -10px rgba(120, 119, 198, 0.12);
+      --bg-gradient: linear-gradient(135deg, #f5f0fb 0%, #eaf4ed 50%, #fdf4eb 100%);
+      --panel-bg: rgba(255, 255, 255, 0.55);
+      --panel-border: rgba(255, 255, 255, 0.8);
+      --card-shadow: 0 10px 30px rgba(135, 120, 160, 0.06);
       
-      /* Accent configurations (Shifted dynamically in JS based on tab) */
-      --primary: #10b981;       /* Teal-Green (Battery default) */
-      --primary-light: rgba(16, 185, 129, 0.15);
-      --secondary: #0d9488;     /* Secondary teal */
-      --secondary-light: #ccfbf1;
-      --accent: #f43f5e;        /* Rose delete button */
-      --accent-light: #ffe4e6;
+      /* Pastel Accents */
+      --pastel-green: #7dc490;
+      --pastel-blue: #7bb5cf;
+      --pastel-orange: #f2aa6b;
+      --pastel-red: #e57f7f;
+      --pastel-purple: #c3b2e5;
+      --pastel-gold: #e5c158;
       
-      --text-main: #0f172a;     /* Slate 900 */
-      --text-muted: #475569;    /* Slate 600 */
-      --border-color: rgba(226, 232, 240, 0.9);
+      /* Typography Colors */
+      --text-dark: #2d3142;
+      --text-muted: #6c757d;
+      --text-light: #ffffff;
       
-      --border-radius-lg: 20px;
-      --border-radius-md: 14px;
-      --border-radius-sm: 8px;
-      
-      --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      --transition-medium: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      /* Reactive Colors */
+      --theme-reactive: var(--pastel-green);
     }
 
-    /* Base Styles */
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
 
-    html, body {
-      scroll-behavior: smooth;
-    }
-
     body {
-      font-family: var(--font-body);
-      color: var(--text-main);
       background: var(--bg-gradient);
+      background-attachment: fixed;
+      color: var(--text-dark);
+      font-family: 'Outfit', sans-serif;
       min-height: 100vh;
-      position: relative;
+      padding: 30px 20px 50px 20px;
       overflow-x: hidden;
-      line-height: 1.5;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      padding: 2rem 1.5rem;
     }
 
-    /* Ambient Floating Blobs */
-    .blob-bg {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(120px);
-      z-index: -1;
-      opacity: 0.55;
-      pointer-events: none;
-    }
-
-    .blob-purple {
-      top: -10%;
-      left: -5%;
-      width: 45vw;
-      height: 45vw;
-      background: radial-gradient(circle, rgba(167, 139, 250, 0.35) 0%, rgba(255, 255, 255, 0) 70%);
-      animation: float-slow 25s infinite alternate ease-in-out;
-    }
-
-    .blob-teal {
-      bottom: -5%;
-      right: -5%;
-      width: 50vw;
-      height: 50vw;
-      background: radial-gradient(circle, rgba(45, 212, 191, 0.25) 0%, rgba(255, 255, 255, 0) 70%);
-      animation: float-slow 20s infinite alternate-reverse ease-in-out;
-    }
-
-    .blob-orange {
-      top: 35%;
-      left: 35%;
-      width: 35vw;
-      height: 35vw;
-      background: radial-gradient(circle, rgba(253, 186, 116, 0.25) 0%, rgba(255, 255, 255, 0) 70%);
-      animation: float-slow 30s infinite alternate ease-in-out;
-    }
-
-    @keyframes float-slow {
-      0% { transform: translate(0, 0) scale(1); }
-      50% { transform: translate(5%, 7%) scale(1.08); }
-      100% { transform: translate(-3%, -5%) scale(0.92); }
-    }
-
-    /* App Container Layout */
-    .app-container {
-      width: 100%;
+    /* Page container */
+    .container {
       max-width: 1200px;
+      margin: 0 auto;
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
-      z-index: 1;
+      gap: 25px;
     }
 
-    /* Header Panel */
-    .app-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1.25rem 2rem;
-      background: var(--glass-bg);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid var(--glass-border);
-      border-radius: var(--border-radius-lg);
-      box-shadow: var(--glass-shadow);
+    /* Header Styling */
+    header {
+      text-align: center;
+      margin-bottom: 5px;
     }
 
-    @media (max-width: 900px) {
-      .app-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1rem;
-        padding: 1.25rem;
-      }
+    header h1 {
+      font-size: 2.6rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      color: var(--text-dark);
+      margin-bottom: 6px;
     }
 
-    .header-logo {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
+    header h1 span {
+      background: linear-gradient(90deg, #9b8ce5, #f2aa6b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
-    .header-icon-svg {
-      width: 32px;
-      height: 32px;
-      stroke: var(--primary);
-      display: block;
-      transition: stroke 0.3s;
-    }
-
-    .header-text h1 {
-      font-family: var(--font-headers);
-      font-size: 1.6rem;
-      font-weight: 700;
-      color: var(--text-main);
-      letter-spacing: -0.03em;
-      line-height: 1.1;
-    }
-
-    .header-text p {
-      font-size: 0.85rem;
+    header p {
+      font-size: 1rem;
       color: var(--text-muted);
-      font-weight: 500;
+      max-width: 650px;
+      margin: 0 auto;
     }
 
-    /* Tabs Navigation bar in Header */
-    .tabs-nav {
+    /* Tabs Navigation Layout */
+    .navigation-tabs-wrapper {
       display: flex;
-      gap: 8px;
-      background: white;
-      border: 1px solid var(--border-color);
-      padding: 4px;
-      border-radius: 50px;
+      justify-content: center;
+      margin-bottom: 5px;
     }
 
-    @media (max-width: 550px) {
-      .tabs-nav {
-        flex-direction: column;
-        width: 100%;
-        border-radius: 18px;
-      }
+    .tabs-nav {
+      background: rgba(255, 255, 255, 0.45);
+      border: 1.5px solid var(--panel-border);
+      border-radius: 20px;
+      padding: 6px;
+      display: flex;
+      gap: 5px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+      backdrop-filter: blur(10px);
     }
 
     .tab-btn {
       border: none;
       background: transparent;
-      padding: 8px 18px;
+      padding: 10px 22px;
       font-family: inherit;
       font-weight: 600;
-      font-size: 0.82rem;
+      font-size: 0.9rem;
       color: var(--text-muted);
-      border-radius: 50px;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: background-color 0.3s, color 0.3s, transform 0.1s;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-dark);
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .tab-btn.active {
+      background: #ffffff;
+      color: var(--text-dark);
+      box-shadow: 0 4px 12px rgba(110, 100, 130, 0.08);
+    }
+
+    /* Sub-selector Segment Toggle (inside Simple Linear Regression tab) */
+    .subselector-wrapper {
+      display: flex;
+      justify-content: center;
+      margin-top: -10px;
+      margin-bottom: 10px;
+    }
+
+    .sub-nav {
+      background: rgba(255, 255, 255, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      border-radius: 15px;
+      padding: 4px;
+      display: flex;
+      gap: 4px;
+    }
+
+    .sub-btn {
+      border: none;
+      background: transparent;
+      padding: 6px 16px;
+      font-family: inherit;
+      font-weight: 600;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      border-radius: 10px;
       cursor: pointer;
       transition: background-color 0.2s, color 0.2s;
     }
 
-    .tab-btn:hover {
-      color: var(--text-main);
-      background: rgba(0,0,0,0.02);
+    .sub-btn:hover {
+      color: var(--text-dark);
     }
 
-    .tab-btn.active {
-      background: var(--primary);
-      color: white;
-      box-shadow: 0 3px 8px var(--primary-light);
+    .sub-btn.active {
+      background: rgba(255, 255, 255, 0.7);
+      color: var(--text-dark);
     }
 
-    .model-badge {
+    /* Workspace Panel Visibility Controllers */
+    .workspace-section {
+      display: none;
+      flex-direction: column;
+      gap: 25px;
+    }
+
+    .workspace-section.active {
       display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.4rem 1rem;
-      background: white;
-      border-radius: 50px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      border: 1px solid var(--border-color);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.01);
     }
 
-    .pulse-dot {
-      width: 8px;
-      height: 8px;
-      background-color: #10b981;
-      border-radius: 50%;
-      display: inline-block;
-      box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5);
-      animation: pulse-ring 2s infinite;
-    }
-
-    @keyframes pulse-ring {
-      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
-      70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
-      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-    }
-
-    /* Structured columns dashboard grid */
-    .dashboard-grid {
+    /* Symmetrical Grid layout - Top Section */
+    .top-section-grid {
       display: grid;
-      grid-template-columns: 1fr 1.6fr;
-      gap: 1.5rem;
-      align-items: start;
+      grid-template-columns: 1fr 1fr;
+      gap: 25px;
+      align-items: stretch;
     }
 
     @media (max-width: 900px) {
-      .dashboard-grid {
+      .top-section-grid {
         grid-template-columns: 1fr;
       }
     }
 
-    .dashboard-sidebar, .dashboard-content {
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-    }
-
-    /* Cards & Panels */
+    /* Glassmorphic Panel/Card design */
     .card {
-      background: var(--glass-bg);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid var(--glass-border);
-      border-radius: var(--border-radius-lg);
-      box-shadow: var(--glass-shadow);
-      padding: 1.5rem;
+      background: var(--panel-bg);
+      border: 1.5px solid var(--panel-border);
+      border-radius: 28px;
+      padding: 30px;
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      box-shadow: var(--card-shadow);
       display: flex;
       flex-direction: column;
-      gap: 1.25rem;
-      transition: transform var(--transition-medium), box-shadow var(--transition-medium);
-    }
-
-    .card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 15px 45px -10px rgba(120, 119, 198, 0.16);
+      justify-content: space-between;
+      transition: transform 0.3s, box-shadow 0.3s;
+      position: relative;
     }
 
     .card-header {
+      margin-bottom: 25px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+      padding-bottom: 15px;
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 0.65rem;
     }
 
     .card-header h2 {
-      font-family: var(--font-headers);
-      font-size: 1.2rem;
+      font-size: 1.4rem;
       font-weight: 700;
-      letter-spacing: -0.02em;
-      color: var(--text-main);
+      color: var(--text-dark);
     }
 
-    .card-icon {
-      background: white;
-      width: 36px;
-      height: 36px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: var(--border-radius-md);
-      box-shadow: 0 4px 10px rgba(0,0,0,0.02);
-      border: 1px solid var(--border-color);
-    }
-
-    .card-icon-svg {
-      width: 18px;
-      height: 18px;
-      stroke: var(--primary);
-      display: block;
-      transition: stroke 0.3s;
-    }
-
-    /* Sandbox visual display readout */
-    .prediction-display-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 1.5rem 1rem;
-      background: linear-gradient(135deg, var(--primary-light) 0%, rgba(255,255,255,0.75) 100%);
-      border-radius: var(--border-radius-md);
-      border: 1px solid rgba(255, 255, 255, 0.8);
-      text-align: center;
-      transition: background-color 0.4s;
-    }
-
-    .prediction-label {
-      font-size: 0.7rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      color: var(--primary);
-      margin-bottom: 0.25rem;
-      text-transform: uppercase;
-      transition: color 0.3s;
-    }
-
-    .prediction-value-wrapper {
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
-      font-weight: 700;
-      color: var(--text-main);
-    }
-
-    .value-unit {
-      font-size: 1.5rem;
-      margin-top: 0.15rem;
-      margin-left: 0.15rem;
-      color: var(--primary);
-      transition: color 0.3s;
-    }
-
-    .prediction-number {
-      font-size: 2.8rem;
-      letter-spacing: -0.04em;
-      line-height: 1;
-      background: linear-gradient(135deg, var(--text-main) 0%, #4338ca 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      font-family: var(--font-body);
-    }
-
-    .prediction-info {
-      font-size: 0.8rem;
+    .card-header .badge {
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(0, 0, 0, 0.06);
       color: var(--text-muted);
-      margin-top: 0.4rem;
-      font-weight: 500;
+      padding: 4px 12px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
-    /* Synchronized Slider group and numeric box */
-    .control-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
+    /* Slider styling */
+    .slider-box {
+      margin-bottom: 25px;
     }
 
     .slider-header {
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: flex-end;
+      margin-bottom: 10px;
     }
 
-    .control-label {
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--text-main);
-    }
-
-    .input-with-unit {
-      display: flex;
-      align-items: center;
-      background: white;
-      border: 1px solid var(--border-color);
-      border-radius: 50px;
-      padding: 0.2rem 0.6rem 0.2rem 0.75rem;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.02);
-      transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
-    }
-
-    .input-with-unit:focus-within {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 2px var(--primary-light);
-    }
-
-    .synced-numeric-input {
-      font-family: var(--font-body);
+    .slider-label {
       font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--primary);
-      border: none;
-      background: transparent;
-      outline: none;
-      width: 48px;
-      text-align: right;
-      -moz-appearance: textfield;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+    }
+
+    .slider-display {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--theme-reactive);
       transition: color 0.3s;
     }
 
-    .synced-numeric-input::-webkit-outer-spin-button,
-    .synced-numeric-input::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
+    .slider-display span {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-dark);
+      margin-left: 2px;
     }
 
-    .input-unit {
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      margin-left: 0.15rem;
-    }
-
-    .control-slider {
+    input[type=range] {
       -webkit-appearance: none;
       width: 100%;
-      height: 8px;
-      border-radius: 10px;
-      background: #cbd5e1;
-      outline: none;
-      cursor: pointer;
-      margin: 8px 0;
-    }
-
-    .control-slider::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background: white;
-      border: 4px solid var(--primary);
-      box-shadow: 0 2px 8px rgba(79, 70, 229, 0.2);
-      transition: transform var(--transition-fast), border-color 0.3s;
-    }
-
-    .control-slider::-webkit-slider-thumb:hover {
-      transform: scale(1.15);
-    }
-
-    .slider-ticks {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      padding: 0 0.2rem;
-    }
-
-    /* Simulator specs grid */
-    .simulator-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      background: transparent;
       margin: 10px 0;
     }
 
+    input[type=range]:focus {
+      outline: none;
+    }
+
+    input[type=range]::-webkit-slider-runnable-track {
+      width: 100%;
+      height: 6px;
+      cursor: pointer;
+      background: rgba(0, 0, 0, 0.05);
+      border-radius: 3px;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+      height: 20px;
+      width: 20px;
+      border-radius: 50%;
+      background: var(--theme-reactive);
+      cursor: pointer;
+      -webkit-appearance: none;
+      margin-top: -7px;
+      border: 2px solid #ffffff;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+      transition: background-color 0.3s, transform 0.1s;
+    }
+
+    input[type=range]::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+    }
+
+    /* Ingestion Form */
+    .ingest-form {
+      border-top: 1px solid rgba(0, 0, 0, 0.04);
+      padding-top: 20px;
+    }
+
+    .ingest-form h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--text-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .form-inputs {
+      display: grid;
+      grid-template-columns: 1.2fr 1.2fr 1fr;
+      gap: 10px;
+      align-items: flex-end;
+    }
+
     @media (max-width: 500px) {
-      .simulator-grid {
+      .form-inputs {
         grid-template-columns: 1fr;
       }
     }
 
-    .sim-group {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .sim-label {
-      font-size: 0.75rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      color: var(--text-muted);
-    }
-
-    .select-style {
-      background-color: white;
-      border: 1px solid var(--border-color);
-      color: var(--text-main);
-      padding: 8px 12px;
-      border-radius: 12px;
+    .form-inputs input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      color: var(--text-dark);
+      padding: 10px;
+      border-radius: 10px;
       font-family: inherit;
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       outline: none;
-      cursor: pointer;
-      transition: border-color var(--transition-fast);
     }
 
-    .select-style:focus {
-      border-color: var(--primary);
-    }
-
-    .toggle-box {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background-color: white;
-      border: 1px solid var(--border-color);
-      padding: 8px 12px;
-      border-radius: 12px;
-      cursor: pointer;
-      user-select: none;
-      font-size: 0.85rem;
-      transition: border-color var(--transition-fast);
-    }
-
-    .toggle-box:hover {
-      border-color: var(--primary);
-    }
-
-    .toggle-dot {
-      width: 30px;
-      height: 16px;
-      background: rgba(0, 0, 0, 0.06);
-      border-radius: 9px;
-      position: relative;
-      transition: background-color var(--transition-fast);
-    }
-
-    .toggle-dot::after {
-      content: '';
-      position: absolute;
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      background: #ffffff;
-      top: 2px;
-      left: 2px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-      transition: left var(--transition-fast);
-    }
-
-    .toggle-box.active {
-      border-color: var(--primary);
-    }
-
-    .toggle-box.active .toggle-dot {
-      background: var(--primary);
-    }
-
-    .toggle-box.active .toggle-dot::after {
-      left: 16px;
-    }
-
-    .quick-actions {
-      display: flex;
-      gap: 0.5rem;
-      margin-top: 5px;
+    .form-inputs input:focus {
+      border-color: var(--pastel-orange);
     }
 
     /* Buttons */
     .btn {
-      font-family: var(--font-body);
-      font-size: 0.85rem;
-      font-weight: 600;
-      padding: 0.65rem 1rem;
-      border: 1px solid transparent;
-      border-radius: var(--border-radius-md);
-      cursor: pointer;
-      transition: all var(--transition-fast);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .btn-primary {
-      background: var(--primary);
-      color: white;
-      box-shadow: 0 2px 10px var(--primary-light);
-      transition: background-color 0.3s, box-shadow 0.3s;
-    }
-
-    .btn-primary:hover {
-      background: #0f9f70; /* slightly darker teal */
-      box-shadow: 0 4px 12px var(--primary-light);
-    }
-
-    .btn-secondary {
-      background: white;
-      color: var(--text-main);
-      border-color: var(--border-color);
-    }
-
-    .btn-secondary:hover {
-      background: #f8fafc;
-      border-color: var(--text-muted);
-    }
-
-    .btn-text {
-      background: none;
+      background: var(--pastel-purple);
+      color: var(--text-dark);
       border: none;
-      color: var(--text-muted);
-      font-family: var(--font-body);
-      font-weight: 500;
-      font-size: 0.8rem;
+      padding: 10px 15px;
+      border-radius: 10px;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-transform: uppercase;
       cursor: pointer;
-      text-decoration: underline;
+      transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+      box-shadow: 0 4px 10px rgba(155, 140, 229, 0.15);
     }
 
-    .btn-text:hover {
-      color: var(--primary);
+    .btn:hover {
+      background: #b2a0db;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 14px rgba(155, 140, 229, 0.25);
     }
 
-    /* Stats Insights Equation box */
-    .equation-box {
-      background: linear-gradient(135deg, var(--secondary-light) 0%, rgba(255,255,255,0.75) 100%);
-      padding: 1rem;
-      border-radius: var(--border-radius-md);
-      border: 1px solid rgba(255, 255, 255, 0.8);
-      text-align: center;
-    }
-
-    .formula-title {
-      font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      color: var(--secondary);
-      margin-bottom: 0.25rem;
-    }
-
-    .formula-display {
-      font-family: var(--font-headers);
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--text-main);
-      word-break: break-all;
-    }
-
-    .formula-display .highlight {
-      color: var(--secondary);
-      font-weight: 700;
-    }
-
-    .metrics-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.65rem;
-    }
-
-    .metric-tile {
-      background: white;
-      padding: 0.75rem;
-      border-radius: var(--border-radius-md);
-      border: 1px solid var(--border-color);
-      display: flex;
-      flex-direction: column;
-    }
-
-    .metric-title {
-      font-size: 0.7rem;
+    .btn-reset {
+      background: transparent;
       color: var(--text-muted);
-      font-weight: 500;
-      margin-bottom: 0.15rem;
+      border: 1px solid rgba(0,0,0,0.1);
+      box-shadow: none;
+      padding: 8px 14px;
+      font-size: 0.8rem;
     }
 
-    .metric-val {
-      font-family: var(--font-headers);
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: var(--text-main);
-      line-height: 1.1;
+    .btn-reset:hover {
+      background: rgba(0, 0, 0, 0.03);
+      color: var(--text-dark);
+      border-color: rgba(0,0,0,0.2);
+      transform: none;
+      box-shadow: none;
     }
 
-    .metric-meta {
-      font-size: 0.65rem;
-      color: var(--text-muted);
-      margin-top: auto;
-    }
-
-    /* Mockups presentations */
+    /* Showcase elements */
     .phone-showcase, .salary-showcase, .plotly-showcase {
       display: flex;
       justify-content: center;
       align-items: center;
+      min-height: 480px;
       position: relative;
     }
 
-    /* Paycheck statement */
-    .paycheck-frame {
-      width: 320px;
-      height: 290px;
-      background: linear-gradient(135deg, #ffffff 0%, #fcfbf7 100%);
-      border: 1.5px solid rgba(255, 255, 255, 0.9);
-      border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(220, 200, 150, 0.1);
-      padding: 20px;
+    /* CSS Phone Chassis */
+    .phone-frame {
+      width: 260px;
+      height: 520px;
+      background: #f7f6f9;
+      border-radius: 38px;
+      border: 8px solid #e1dfeb;
+      box-shadow: 
+        0 20px 40px rgba(110, 100, 130, 0.12),
+        inset 0 0 10px rgba(255, 255, 255, 0.8);
+      position: relative;
+      overflow: hidden;
+      transform-style: preserve-3d;
+      transition: transform 0.15s ease-out;
+    }
+
+    .phone-screen {
+      width: 100%;
+      height: 100%;
+      background: #ffffff;
+      border-radius: 30px;
+      padding: 16px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      transform-style: preserve-3d;
-      transition: transform 0.15s ease-out;
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+      transition: background-color 0.4s;
+    }
+
+    .phone-notch {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90px;
+      height: 20px;
+      background: #e1dfeb;
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
+      z-index: 50;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .phone-camera {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #8b8896;
+    }
+
+    .phone-speaker {
+      width: 25px;
+      height: 3px;
+      border-radius: 1px;
+      background: #b5b2c2;
+    }
+
+    .phone-status {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      z-index: 10;
+      padding-top: 2px;
+    }
+
+    .phone-battery-bar {
+      width: 18px;
+      height: 9px;
+      border: 1px solid var(--text-dark);
+      border-radius: 2px;
+      padding: 1px;
+      display: flex;
+    }
+
+    .phone-battery-bar-fill {
+      height: 100%;
+      background-color: var(--theme-reactive);
+      width: 100%;
+      transition: width 0.3s, background-color 0.3s;
+    }
+
+    .phone-notification {
+      position: absolute;
+      top: 35px;
+      left: 10px;
+      right: 10px;
+      background: rgba(255, 255, 255, 0.9);
+      border: 1.5px solid var(--pastel-red);
+      border-radius: 14px;
+      padding: 10px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+      z-index: 40;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: opacity 0.4s, transform 0.4s;
+      pointer-events: none;
+    }
+
+    .phone-notification.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .notification-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #b05c5c;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .notification-body {
+      font-size: 0.7rem;
+      color: var(--text-dark);
+      line-height: 1.2;
+    }
+
+    .phone-display {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      z-index: 10;
+      margin-top: 15px;
+    }
+
+    .phone-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+    }
+
+    .phone-percent {
+      font-size: 4rem;
+      font-weight: 800;
+      line-height: 1;
+      margin: 8px 0;
+      color: var(--theme-reactive);
+      transition: color 0.3s;
+    }
+
+    .phone-percent span {
+      font-size: 1.8rem;
+      font-weight: 600;
+    }
+
+    .phone-sot {
+      font-size: 0.8rem;
+      background: rgba(0, 0, 0, 0.04);
+      padding: 5px 12px;
+      border-radius: 15px;
+      border: 1px solid rgba(0,0,0,0.02);
+    }
+
+    .phone-health {
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-top: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .phone-badge {
+      display: inline-flex;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.04);
+      border: 1px solid rgba(0,0,0,0.04);
+      color: var(--text-dark);
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 10px;
+      margin-top: 12px;
+    }
+
+    .phone-fluid-wave {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      pointer-events: none;
+      transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+      transform: translateY(50%);
+    }
+
+    .wave-element {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+    }
+
+    .wave-path-front {
+      fill: var(--theme-reactive);
+      opacity: 0.15;
+      transition: fill 0.3s;
+    }
+
+    .wave-path-back {
+      fill: var(--theme-reactive);
+      opacity: 0.08;
+      transition: fill 0.3s;
+    }
+
+    .phone-charging-flash {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      width: 80px;
+      height: 80px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 50%;
+      z-index: 30;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
+      pointer-events: none;
+    }
+
+    .phone-charging-flash.charge-animate {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+    }
+
+    .phone-home-line {
+      height: 25px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      z-index: 10;
+    }
+
+    .phone-home-line-bar {
+      width: 80px;
+      height: 3px;
+      background-color: rgba(0, 0, 0, 0.15);
+      border-radius: 1.5px;
+      margin-bottom: 5px;
+    }
+
+    .phone-dark-screen {
+      background: #090a0f !important;
+    }
+    .phone-dark-screen .phone-status { color: #ffffff; }
+    .phone-dark-screen .phone-battery-bar { border-color: #ffffff; }
+    .phone-dark-screen .phone-sot { background: rgba(255, 255, 255, 0.06); border-color: rgba(255,255,255,0.02); color: #ffffff; }
+    .phone-dark-screen .phone-badge { background: rgba(255, 255, 255, 0.06); border-color: rgba(255, 255, 255, 0.04); color: #ffffff; }
+    .phone-dark-screen .phone-home-line-bar { background-color: rgba(255, 255, 255, 0.3); }
+
+    /* CSS Salary Paycheck Mockup Chassis */
+    .paycheck-frame {
+      width: 320px;
+      height: 480px;
+      background: linear-gradient(135deg, #ffffff 0%, #fcfbf7 100%);
+      border: 1.5px solid rgba(255, 255, 255, 0.9);
+      border-radius: 24px;
+      box-shadow: 0 15px 35px rgba(220, 200, 150, 0.15);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
     }
 
     .paycheck-header {
       display: flex;
       justify-content: space-between;
       border-bottom: 1.5px dashed rgba(229, 193, 88, 0.3);
-      padding-bottom: 10px;
+      padding-bottom: 12px;
     }
 
     .paycheck-corp {
@@ -738,45 +706,47 @@
     }
 
     .paycheck-corp-name {
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       font-weight: 800;
-      color: var(--text-main);
+      color: var(--text-dark);
       letter-spacing: -0.5px;
     }
 
     .paycheck-corp-sub {
-      font-size: 0.6rem;
+      font-size: 0.65rem;
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
 
     .paycheck-seal {
-      width: 36px;
-      height: 36px;
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
       background: rgba(229, 193, 88, 0.1);
-      border: 2px dotted #e5c158;
+      border: 2px dotted var(--pastel-gold);
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 0.75rem;
-      color: #e5c158;
+      font-size: 0.85rem;
+      color: var(--pastel-gold);
       font-weight: 700;
     }
 
     .paycheck-body {
+      flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      margin: 10px 0;
+      justify-content: center;
+      gap: 15px;
+      margin: 20px 0;
     }
 
     .paycheck-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 0.78rem;
+      font-size: 0.8rem;
     }
 
     .paycheck-row-label {
@@ -785,43 +755,45 @@
     }
 
     .paycheck-row-value {
-      color: var(--text-main);
+      color: var(--text-dark);
       font-weight: 700;
     }
 
     .paycheck-amount-box {
       background: rgba(229, 193, 88, 0.05);
       border: 1px solid rgba(229, 193, 88, 0.15);
-      border-radius: 12px;
-      padding: 10px;
+      border-radius: 16px;
+      padding: 18px 12px;
       text-align: center;
+      box-shadow: inset 0 2px 5px rgba(229, 193, 88, 0.02);
+      transition: background-color 0.3s;
     }
 
     .paycheck-amount-num {
       font-family: 'Space Grotesk', monospace;
-      font-size: 1.8rem;
+      font-size: 2.2rem;
       font-weight: 700;
-      color: #e5c158;
+      color: var(--pastel-gold);
       line-height: 1;
     }
 
     .paycheck-amount-label {
-      font-size: 0.6rem;
+      font-size: 0.65rem;
       font-weight: 700;
       text-transform: uppercase;
       color: var(--text-muted);
       letter-spacing: 0.5px;
-      margin-top: 3px;
+      margin-top: 5px;
     }
 
     .paycheck-progress-container {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 6px;
     }
 
     .paycheck-progress-bar {
-      height: 8px;
+      height: 10px;
       background: rgba(0,0,0,0.03);
       border-radius: 5px;
       overflow: hidden;
@@ -837,281 +809,318 @@
 
     .paycheck-footer {
       border-top: 1.5px dashed rgba(229, 193, 88, 0.3);
-      padding-top: 8px;
+      padding-top: 12px;
       text-align: center;
       font-family: 'Space Grotesk', monospace;
-      font-size: 0.6rem;
+      font-size: 0.65rem;
       color: var(--text-muted);
       letter-spacing: 1px;
     }
 
-    /* Plotly container size */
+    /* Plotly 3D layout container */
     .plotly-container {
       width: 100%;
-      height: 380px;
-      background: white;
-      border: 1px solid var(--border-color);
-      border-radius: var(--border-radius-lg);
+      height: 480px;
+      background: rgba(255, 255, 255, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: var(--card-shadow);
+    }
+
+    /* Bottom Panel: Plots grid */
+    .bottom-section-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+    }
+
+    .plot-card {
+      background: var(--panel-bg);
+      border: 1.5px solid var(--panel-border);
+      border-radius: 28px;
+      padding: 30px;
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      box-shadow: var(--card-shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .plots-grid-layout {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: 5px;
+    }
+
+    @media (max-width: 900px) {
+      .plots-grid-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .plot-canvas-box {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .plot-box-label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-dark);
+      letter-spacing: 0.5px;
+      padding-left: 5px;
+    }
+
+    .plot-wrapper-small {
+      position: relative;
+      height: 270px;
+      background: rgba(255, 255, 255, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      border-radius: 18px;
+      padding: 10px;
       overflow: hidden;
     }
 
-    /* Scrollable Data Table elements */
-    .table-container {
-      max-height: 250px;
-      overflow-y: auto;
-      border-radius: var(--border-radius-md);
-      border: 1px solid var(--border-color);
-      background: white;
+    .graph-slider-container {
+      background: rgba(255, 255, 255, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      border-radius: 18px;
+      padding: 18px;
+      margin-top: 5px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.02);
     }
 
-    .table-container::-webkit-scrollbar {
-      width: 8px;
+    /* Metrics display cell */
+    .metrics-summary-bar {
+      display: grid;
+      grid-template-columns: 1.5fr repeat(4, 1fr);
+      gap: 15px;
+      align-items: center;
+      border-top: 1px solid rgba(0, 0, 0, 0.04);
+      padding-top: 20px;
     }
 
-    .table-container::-webkit-scrollbar-track {
-      background: #f1f5f9;
-      border-radius: 0 10px 10px 0;
+    @media (max-width: 800px) {
+      .metrics-summary-bar {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
     }
 
-    .table-container::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
-      border-radius: 10px;
+    .formula-display-box {
+      background: rgba(255, 255, 255, 0.6);
+      border: 1.5px solid rgba(0, 0, 0, 0.03);
+      padding: 15px;
+      border-radius: 14px;
+      font-family: 'Space Grotesk', monospace;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
 
-    .table-container::-webkit-scrollbar-thumb:hover {
-      background: #94a3b8;
+    .formula-display-box span {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      font-family: 'Outfit', sans-serif;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      text-align: left;
+    .metric-data-cell {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.4);
+      border: 1px dashed rgba(0, 0, 0, 0.08);
+      padding: 12px;
+      border-radius: 12px;
+      height: 70px;
     }
 
-    thead {
-      position: sticky;
-      top: 0;
-      background: #f8fafc;
-      z-index: 2;
-      box-shadow: 0 1px 0 var(--border-color);
+    .metric-data-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
     }
 
-    th {
-      font-family: var(--font-headers);
+    .metric-data-value {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--text-dark);
+      margin-top: 4px;
+    }
+
+    /* Keyframes */
+    @keyframes fadeInReveal {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .simulator-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    @media (max-width: 500px) {
+      .simulator-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .sim-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .sim-label {
       font-size: 0.8rem;
       font-weight: 600;
+      text-transform: uppercase;
       color: var(--text-muted);
-      padding: 0.65rem 0.85rem;
-      letter-spacing: 0.05em;
     }
 
-    td {
+    .select-style {
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      color: var(--text-dark);
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-family: inherit;
       font-size: 0.9rem;
-      padding: 0.5rem 0.85rem;
-      border-bottom: 1px solid var(--border-color);
-      color: var(--text-main);
-      font-weight: 500;
-    }
-
-    tbody tr:last-child td {
-      border-bottom: none;
-    }
-
-    tbody tr {
-      transition: background-color var(--transition-fast);
-    }
-
-    tbody tr:hover {
-      background-color: #f1f5f9;
-    }
-
-    .btn-delete {
-      background: none;
-      border: none;
-      cursor: pointer;
-      width: 24px;
-      height: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      margin: 0 auto;
-      transition: background-color var(--transition-fast);
-    }
-
-    .btn-delete:hover {
-      background-color: var(--accent-light);
-    }
-
-    .trash-icon-svg {
-      width: 14px;
-      height: 14px;
-      stroke: var(--text-muted);
-      transition: stroke var(--transition-fast);
-      fill: none;
-    }
-
-    .btn-delete:hover .trash-icon-svg {
-      stroke: var(--accent);
-    }
-
-    .add-data-row {
-      display: flex;
-      gap: 0.5rem;
-      background: white;
-      padding: 0.5rem;
-      border-radius: var(--border-radius-md);
-      border: 1px solid var(--border-color);
-      margin-top: 10px;
-    }
-
-    .add-data-row input {
-      flex: 1;
-      font-family: var(--font-body);
-      font-size: 0.85rem;
-      padding: 0.5rem 0.75rem;
-      border: 1px solid var(--border-color);
-      border-radius: var(--border-radius-sm);
       outline: none;
-      transition: border-color var(--transition-fast);
+      cursor: pointer;
+      transition: border-color 0.3s, background-color 0.3s;
     }
 
-    .add-data-row input:focus {
-      border-color: var(--primary);
-    }
-
-    /* 2D charts wrapper */
-    .chart-container {
-      position: relative;
-      width: 100%;
-      min-height: 280px;
-    }
-
-    .graph-slider-container {
-      background: white;
-      border: 1px solid var(--border-color);
-      border-radius: var(--border-radius-md);
-      padding: 12px;
-      margin-top: 5px;
-    }
-
-    .app-footer {
+    .toggle-box {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0.85rem 2rem;
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      border-radius: var(--border-radius-lg);
-      background: rgba(255,255,255,0.25);
-      border: 1px solid rgba(255,255,255,0.4);
-      margin-top: 1.5rem;
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      padding: 10px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      user-select: none;
+      font-size: 0.9rem;
+      transition: border-color 0.3s;
     }
 
-    @media (max-width: 600px) {
-      body { padding: 1rem 0.5rem; }
-      .dashboard-grid { grid-template-columns: 1fr; }
-      .app-header { flex-direction: column; align-items: flex-start; gap: 0.75rem; padding: 1rem; }
-      .card { padding: 1.1rem; }
-      .prediction-number { font-size: 2.2rem; }
-      .metrics-grid { grid-template-columns: 1fr; }
-      .app-footer { flex-direction: column; gap: 0.5rem; text-align: center; padding: 1rem; }
+    .toggle-box.active {
+      border-color: var(--pastel-blue);
+    }
+
+    .toggle-box.active .toggle-dot {
+      background: var(--pastel-blue);
+    }
+
+    .toggle-box.active .toggle-dot::after {
+      left: 20px;
+    }
+
+    .toggle-dot {
+      width: 36px;
+      height: 18px;
+      background: rgba(0, 0, 0, 0.06);
+      border-radius: 9px;
+      position: relative;
+      transition: background-color 0.3s;
+    }
+
+    .toggle-dot::after {
+      content: '';
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #ffffff;
+      top: 2px;
+      left: 2px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      transition: left 0.3s, background-color 0.3s;
+    }
+
+    footer.app-footer {
+      text-align: center;
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(0, 0, 0, 0.04);
+      color: var(--text-muted);
+      font-size: 0.8rem;
     }
   </style>
 </head>
 <body>
-  <!-- Ambient Gradient Background Blobs -->
-  <div class="blob-bg blob-purple"></div>
-  <div class="blob-bg blob-teal"></div>
-  <div class="blob-bg blob-orange"></div>
 
-  <div class="app-container">
-    <!-- Header -->
-    <header class="app-header">
-      <div class="header-logo">
-        <span class="icon">
-          <svg class="header-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-          </svg>
-        </span>
-        <div class="header-text">
-          <h1>VoltAI ML Sandbox</h1>
-          <p>Interactive Regression Models Workspace</p>
-        </div>
-      </div>
-
-      <!-- Tab Buttons -->
-      <nav class="tabs-nav">
-        <button class="tab-btn active" id="tab-battery" onclick="switchPredictor('battery')">🔋 Battery Life</button>
-        <button class="tab-btn" id="tab-salary" onclick="switchPredictor('salary')">💼 Exp vs Salary</button>
-        <button class="tab-btn" id="tab-income" onclick="switchPredictor('income')">💵 Multiple Regression</button>
-      </nav>
-
-      <div class="model-badge">
-        <span class="pulse-dot"></span>
-        <span id="model-status">Active ML Engine</span>
-      </div>
+  <div class="container">
+    
+    <!-- HEADER -->
+    <header>
+      <h1>VoltAI <span>Machine Learning Sandbox</span></h1>
+      <p>
+        Explore and interact with Simple and Multiple Linear Regression models. Tweak configurations, ingest custom data points, and retrain models live.
+      </p>
     </header>
 
-    <!-- Main Dashboard Grid -->
-    <main class="dashboard-grid">
-      
-      <!-- ==================== LEFT SIDEBAR ==================== -->
-      <div class="dashboard-sidebar">
-        
-        <!-- Prediction Sandbox Card -->
-        <section class="card sandbox-card">
-          <div class="card-header">
-            <span class="card-icon">
-              <svg class="card-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="4" y1="21" x2="4" y1="14"></line>
-                <line x1="4" y1="10" x2="4" y1="3"></line>
-                <line x1="12" y1="21" x2="12" y1="12"></line>
-                <line x1="12" y1="8" x2="12" y1="3"></line>
-                <line x1="20" y1="21" x2="20" y1="16"></line>
-                <line x1="20" y1="12" x2="20" y1="3"></line>
-                <line x1="1" y1="14" x2="7" y1="14"></line>
-                <line x1="9" y1="8" x2="15" y1="8"></line>
-                <line x1="17" y1="16" x2="23" y1="16"></line>
-              </svg>
-            </span>
-            <h2>Interactive Predictor</h2>
-          </div>
-          
-          <!-- Dynamic Target Display Readout -->
-          <div class="prediction-display-container">
-            <p class="prediction-label" id="sandbox-readout-label">EXPECTED CHARGE</p>
-            <div class="prediction-value-wrapper">
-              <span id="sandbox-readout-val" class="prediction-number">100</span>
-              <span id="sandbox-readout-unit" class="value-unit">%</span>
-            </div>
-            <p class="prediction-info" id="sandbox-readout-info">At 5.0 hours SOT</p>
-          </div>
+    <!-- TABS NAVIGATION -->
+    <div class="navigation-tabs-wrapper">
+      <nav class="tabs-nav">
+        <button class="tab-btn active" id="tab-simple" onclick="switchMainTab('simple')">Simple Linear Regression</button>
+        <button class="tab-btn" id="tab-multiple" onclick="switchMainTab('multiple')">Multiple Linear Regression</button>
+      </nav>
+    </div>
 
-          <!-- Synced Input Controls: Battery (Default) -->
-          <div class="predictor-controls-group" id="controls-battery">
-            <div class="control-group">
+    <!-- SUB-SELECTOR SEGMENTS (Only visible when Simple tab is active) -->
+    <div class="subselector-wrapper" id="simple-sub-nav">
+      <nav class="sub-nav">
+        <button class="sub-btn active" id="sub-battery" onclick="switchSubPredictor('battery')">🔋 Battery Life Predictor</button>
+        <button class="sub-btn" id="sub-salary" onclick="switchSubPredictor('salary')">💼 Salary Predictor</button>
+      </nav>
+    </div>
+
+    <!-- ==================== WORKSPACE 1: BATTERY PREDICTOR ==================== -->
+    <main class="workspace-section active" id="workspace-battery">
+      <div class="top-section-grid">
+        <!-- Left controller card -->
+        <section class="card">
+          <div>
+            <div class="card-header">
+              <h2>Battery Simulator Controller</h2>
+              <span class="badge">Simulation Settings</span>
+            </div>
+
+            <div class="slider-box">
               <div class="slider-header">
-                <label for="battery-sot-numeric" class="control-label">Screen On Time (SOT)</label>
-                <div class="input-with-unit">
-                  <input type="number" class="synced-numeric-input" id="battery-sot-numeric" min="0" max="12" step="0.1" value="5.0" oninput="handleNumericBoxInput('battery', this)">
-                  <span class="input-unit">Hrs</span>
-                </div>
+                <span class="slider-label">Screen On Time (SOT)</span>
+                <div class="slider-display display-reactive-color" id="battery-sot-display-val">5.0<span>hrs</span></div>
               </div>
-              <input type="range" class="control-slider" id="battery-sot-slider" min="0" max="12" step="0.1" value="5.0" oninput="handleSliderControlInput('battery', this)">
-              <div class="slider-ticks">
-                <span>0h (Full)</span>
-                <span>4h</span>
-                <span>8h</span>
-                <span>12h (Empty)</span>
+              <input type="range" class="control-slider" id="battery-sot-slider-control" min="0" max="12.0" step="0.1" value="5.0" oninput="handleSliderInput(this, 'battery')">
+              <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted);">
+                <span>0.0h (Full)</span>
+                <span>4.0h</span>
+                <span>8.0h</span>
+                <span>12.0h (Empty)</span>
               </div>
             </div>
 
-            <!-- Hardware modifiers simulation specs grid -->
             <div class="simulator-grid">
               <div class="sim-group">
-                <span class="sim-label">Simulated App</span>
+                <span class="sim-label">Active Simulated App</span>
                 <select id="app-drain-select" class="select-style" onchange="triggerPrediction()">
                   <option value="0.5">Standby Idle (0.5x)</option>
                   <option value="1.0" selected>Web Browsing (1.0x)</option>
@@ -1119,225 +1128,234 @@
                   <option value="2.0">3D Gaming (2.0x)</option>
                 </select>
               </div>
+
               <div class="sim-group">
                 <span class="sim-label">Refresh Mode</span>
                 <div id="hz-toggle-box" class="toggle-box" onclick="toggleRefreshHz()">
-                  <span>120Hz Mode</span>
+                  <span>Fluid Mode (120Hz)</span>
                   <div class="toggle-dot"></div>
                 </div>
               </div>
+
               <div class="sim-group">
-                <span class="sim-label">Display Theme</span>
+                <span class="sim-label">OLED Display Mode</span>
                 <div id="oled-toggle-box" class="toggle-box" onclick="toggleOledMode()">
-                  <span>OLED Dark</span>
+                  <span>Dark Mode</span>
                   <div class="toggle-dot"></div>
                 </div>
               </div>
+
               <div class="sim-group">
-                <span class="sim-label">Scroll Drain</span>
+                <span class="sim-label">Scroll Interface Link</span>
                 <div id="scroll-toggle-box" class="toggle-box" onclick="toggleScrollCouple()">
-                  <span>Scroll Sim</span>
+                  <span>Scroll-Bound Drain</span>
                   <div class="toggle-dot"></div>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Synced Input Controls: Salary -->
-          <div class="predictor-controls-group" id="controls-salary" style="display:none;">
-            <div class="control-group">
-              <div class="slider-header">
-                <label for="salary-exp-numeric" class="control-label">Work Experience</label>
-                <div class="input-with-unit">
-                  <input type="number" class="synced-numeric-input" id="salary-exp-numeric" min="0" max="15" step="0.1" value="5.0" oninput="handleNumericBoxInput('salary', this)">
-                  <span class="input-unit">Yrs</span>
+          <div class="ingest-form">
+            <h3>Inject Custom Coordinate</h3>
+            <form onsubmit="submitPoint(event, 'battery')">
+              <div class="form-inputs">
+                <input type="number" id="battery-input-time" min="0" max="24" step="0.1" placeholder="SOT Hours" required>
+                <input type="number" id="battery-input-percent" min="0" max="100" step="0.5" placeholder="Battery %" required>
+                <button type="submit" class="btn">Retrain</button>
+              </div>
+            </form>
+            <div style="margin-top: 15px; display: flex; justify-content: flex-end;">
+              <button class="btn btn-reset" onclick="resetDataset('battery')">Restore Default Data</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Right mockup card -->
+        <section class="card" style="padding: 20px;">
+          <div class="phone-showcase" id="phone-tilt-wrapper">
+            <div class="phone-frame" id="phone-3d">
+              <div class="phone-notch">
+                <div class="phone-camera"></div>
+                <div class="phone-speaker"></div>
+              </div>
+
+              <div class="phone-screen" id="phone-screen-screen">
+                <div class="phone-status">
+                  <span id="phone-status-time">11:58</span>
+                  <div style="display:flex; align-items:center; gap: 4px;">
+                    <span>5G</span>
+                    <div class="phone-battery-bar">
+                      <div class="phone-battery-bar-fill" id="phone-bar-battery-fill"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="phone-notification" id="low-power-notification">
+                  <div class="notification-title">
+                    <span>🔋 System Warning</span>
+                    <span style="font-size: 0.6rem; opacity: 0.7;">Now</span>
+                  </div>
+                  <div class="notification-body" id="low-power-notification-text">
+                    Battery level is low (15%). Performance is restricted.
+                  </div>
+                </div>
+
+                <div class="phone-display">
+                  <span class="phone-label">Remaining Charge</span>
+                  <div class="phone-percent display-reactive-color" id="phone-readout-percentage">100<span>%</span></div>
+                  <div class="phone-sot" id="phone-readout-sot">Active: 0.0 hrs</div>
+                  <div class="phone-health" id="phone-readout-health">Battery Health: 99%</div>
+                  <div class="phone-badge" id="phone-readout-badge">Web Browsing</div>
+                </div>
+
+                <div class="phone-fluid-wave" id="phone-liquid-wave">
+                  <svg class="wave-element" viewBox="0 0 120 120" preserveAspectRatio="none">
+                    <path class="wave-path-back" d="M0,15 C30,25 40,5 70,15 C100,25 110,10 120,15 L120,120 L0,120 Z"></path>
+                    <path class="wave-path-front" d="M0,15 C20,5 50,25 80,10 C100,20 110,5 120,15 L120,120 L0,120 Z"></path>
+                  </svg>
+                </div>
+
+                <div class="phone-charging-flash" id="charging-flash">
+                  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#f2aa6b" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                  </svg>
+                </div>
+
+                <div class="phone-home-line">
+                  <div class="phone-home-line-bar"></div>
                 </div>
               </div>
-              <input type="range" class="control-slider" id="salary-exp-slider" min="0" max="15" step="0.1" value="5.0" oninput="handleSliderControlInput('salary', this)">
-              <div class="slider-ticks">
-                <span>0y (Entry)</span>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- ==================== WORKSPACE 2: SALARY PREDICTOR ==================== -->
+    <main class="workspace-section" id="workspace-salary">
+      <div class="dashboard-grid">
+        
+        <!-- LEFT SIDEBAR: Controls & Insights -->
+        <div class="dashboard-sidebar">
+          
+          <!-- Sandbox Card -->
+          <section class="card sandbox-card">
+            <div class="card-header">
+              <span class="card-icon">
+                <svg class="card-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="4" y1="21" x2="4" y2="14"></line>
+                  <line x1="4" y1="10" x2="4" y1="3"></line>
+                  <line x1="12" y1="21" x2="12" y2="12"></line>
+                  <line x1="12" y1="8" x2="12" y2="3"></line>
+                  <line x1="20" y1="21" x2="20" y2="16"></line>
+                  <line x1="20" y1="12" x2="20" y1="3"></line>
+                  <line x1="1" y1="14" x2="7" y1="14"></line>
+                  <line x1="9" y1="8" x2="15" y1="8"></line>
+                  <line x1="17" y1="16" x2="23" y1="16"></line>
+                </svg>
+              </span>
+              <h2>Interactive Predictor</h2>
+            </div>
+            
+            <div class="salary-display-container" style="display: flex; flex-direction: column; align-items: center; padding: 1.5rem 1rem; background: linear-gradient(135deg, rgba(229, 193, 88, 0.15) 0%, rgba(255,255,255,0.75) 100%); border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.8); text-align: center;">
+              <p style="font-size: 0.75rem; font-weight: 700; color: #bca042; margin-bottom: 0.25rem; letter-spacing: 0.05em; text-transform: uppercase;">EXPECTED SALARY</p>
+              <div style="display: flex; align-items: flex-start; justify-content: center; font-weight: 700; color: var(--text-dark);">
+                <span style="font-size: 1.5rem; margin-top: 0.15rem; margin-right: 0.15rem; color: #e5c158;">$</span>
+                <span id="salary-value-num" style="font-size: 2.8rem; letter-spacing: -0.04em; line-height: 1;">89,820</span>
+              </div>
+              <p class="prediction-info" id="salary-value-info" style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.4rem; font-weight: 500;">At 5.0 years of experience</p>
+            </div>
+
+            <div class="control-group" style="display: flex; flex-direction: column; gap: 0.4rem; margin-top: 15px;">
+              <div class="slider-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <label for="salary-numeric-val-input" class="control-label" style="font-size: 0.9rem; font-weight: 600;">Years of Experience</label>
+                <div class="input-with-unit" style="display: flex; align-items: center; background: white; border: 1px solid rgba(0,0,0,0.1); border-radius: 50px; padding: 2px 10px;">
+                  <input type="number" id="salary-numeric-val-input" min="0" max="15" step="0.1" value="5.0" style="border: none; background: transparent; outline: none; width: 45px; text-align: right; font-weight: 700; color: #e5c158;" oninput="handleSalaryExpNumericBox(this)">
+                  <span class="input-unit" style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-left: 2px;">Yrs</span>
+                </div>
+              </div>
+              <input type="range" class="control-slider" id="salary-slider-control-input" min="0" max="15" step="0.1" value="5" style="-webkit-appearance: none; width: 100%; height: 8px; border-radius: 10px; background: #cbd5e1; outline: none; cursor: pointer; margin: 8px 0;" oninput="handleSalaryExpSlider(this)">
+              <div class="slider-ticks" style="display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--text-muted);">
+                <span>0y</span>
                 <span>3y</span>
                 <span>6y</span>
                 <span>9y</span>
                 <span>12y</span>
-                <span>15y (Expert)</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Synced Input Controls: Income (Multiple Regression) -->
-          <div class="predictor-controls-group" id="controls-income" style="display:none;">
-            <!-- Age Slider synced -->
-            <div class="control-group" style="margin-bottom:15px;">
-              <div class="slider-header">
-                <label for="income-age-numeric" class="control-label">Simulated Age (x₁)</label>
-                <div class="input-with-unit">
-                  <input type="number" class="synced-numeric-input" id="income-age-numeric" min="20" max="60" step="1" value="37" oninput="handleNumericBoxInput('income-age', this)">
-                  <span class="input-unit">Yrs</span>
-                </div>
-              </div>
-              <input type="range" class="control-slider" id="income-age-slider" min="20" max="60" step="1" value="37" oninput="handleSliderControlInput('income-age', this)">
-              <div class="slider-ticks">
-                <span>20y</span>
-                <span>30y</span>
-                <span>40y</span>
-                <span>50y</span>
-                <span>60y</span>
-              </div>
-            </div>
-
-            <!-- Experience Slider synced -->
-            <div class="control-group">
-              <div class="slider-header">
-                <label for="income-exp-numeric" class="control-label">Work Experience (x₂)</label>
-                <div class="input-with-unit">
-                  <input type="number" class="synced-numeric-input" id="income-exp-numeric" min="0" max="20" step="0.5" value="5.0" oninput="handleNumericBoxInput('income-exp', this)">
-                  <span class="input-unit">Yrs</span>
-                </div>
-              </div>
-              <input type="range" class="control-slider" id="income-exp-slider" min="0" max="20" step="0.5" value="5.0" oninput="handleSliderControlInput('income-exp', this)">
-              <div class="slider-ticks">
-                <span>0y</span>
-                <span>5y</span>
-                <span>10y</span>
                 <span>15y</span>
-                <span>20y</span>
               </div>
             </div>
-          </div>
 
-          <div class="quick-actions">
-            <button class="btn btn-secondary" onclick="resetActiveSliders()">Reset Sliders</button>
-            <button class="btn btn-secondary" id="btn-average" onclick="useActiveDatasetMean()">Use Mean Inputs</button>
-          </div>
-        </section>
+            <div class="quick-actions" style="display: flex; gap: 10px; margin-top: 10px;">
+              <button class="btn btn-secondary" onclick="resetSalarySlider()">Reset Slider</button>
+              <button class="btn btn-secondary" onclick="useSalaryMeanExp()">Use Mean Exp</button>
+            </div>
+          </section>
 
-        <!-- Model Insights Card -->
-        <section class="card stats-card">
-          <div class="card-header">
-            <span class="card-icon">
-              <svg class="card-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="18" cy="5" r="3"></circle>
-                <circle cx="6" cy="12" r="3"></circle>
-                <circle cx="18" cy="19" r="3"></circle>
-                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-                <line x1="15.41" y1="6.51" x2="8.59" y1="10.49"></line>
-              </svg>
-            </span>
-            <h2>Model Insights</h2>
-          </div>
+          <!-- Model Insights Card -->
+          <section class="card stats-card">
+            <div class="card-header">
+              <span class="card-icon">
+                <svg class="card-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="18" cy="5" r="3"></circle>
+                  <circle cx="6" cy="12" r="3"></circle>
+                  <circle cx="18" cy="19" r="3"></circle>
+                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                  <line x1="15.41" y1="6.51" x2="8.59" y1="10.49"></line>
+                </svg>
+              </span>
+              <h2>Model Insights</h2>
+            </div>
+            
+            <div class="equation-box" style="background: linear-gradient(135deg, rgba(229,193,88,0.15) 0%, rgba(255,255,255,0.75) 100%); padding: 1rem; border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.8); text-align: center;">
+              <p class="formula-title" style="font-size: 0.65rem; font-weight: 700; color: #bca042; margin-bottom: 0.25rem;">LEARNED REGRESSION EQUATION</p>
+              <div class="formula-display" id="salary-formula-math" style="font-family: var(--font-headers); font-size: 1rem; font-weight: 600;">
+                Salary = <span class="highlight" style="color: #e5c158; font-weight: 700;">m</span> * Exp + <span class="highlight" style="color: #e5c158; font-weight: 700;">c</span>
+              </div>
+            </div>
+
+            <div class="metrics-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+              <div class="metric-tile" style="background: white; padding: 10px; border-radius: 12px; border: 1px solid var(--panel-border); display: flex; flex-direction: column;">
+                <span class="metric-title" style="font-size: 0.7rem; color: var(--text-muted);">Goodness of Fit (R²)</span>
+                <span class="metric-val" id="salary-r2-val" style="font-size: 1.15rem; font-weight: 700;">0.960</span>
+                <span class="metric-meta" id="salary-r2-desc" style="font-size: 0.65rem; color: var(--text-muted); margin-top: auto;">Excellent fit</span>
+              </div>
+              <div class="metric-tile" style="background: white; padding: 10px; border-radius: 12px; border: 1px solid var(--panel-border); display: flex; flex-direction: column;">
+                <span class="metric-title" style="font-size: 0.7rem; color: var(--text-muted);">Slope (Growth)</span>
+                <span class="metric-val" id="salary-slope-val" style="font-size: 1.15rem; font-weight: 700;">$12,789</span>
+                <span class="metric-meta" style="font-size: 0.65rem; color: var(--text-muted); margin-top: auto;">Per year of exp</span>
+              </div>
+              <div class="metric-tile" style="background: white; padding: 10px; border-radius: 12px; border: 1px solid var(--panel-border); display: flex; flex-direction: column;">
+                <span class="metric-title" style="font-size: 0.7rem; color: var(--text-muted);">Intercept (Base)</span>
+                <span class="metric-val" id="salary-intercept-val" style="font-size: 1.15rem; font-weight: 700;">$19,998</span>
+                <span class="metric-meta" style="font-size: 0.65rem; color: var(--text-muted); margin-top: auto;">At zero exp</span>
+              </div>
+              <div class="metric-tile" style="background: white; padding: 10px; border-radius: 12px; border: 1px solid var(--panel-border); display: flex; flex-direction: column;">
+                <span class="metric-title" style="font-size: 0.7rem; color: var(--text-muted);">Total Samples (N)</span>
+                <span class="metric-val" id="salary-samples-val" style="font-size: 1.15rem; font-weight: 700;">7</span>
+                <span class="metric-meta" style="font-size: 0.65rem; color: var(--text-muted); margin-top: auto;">Data points</span>
+              </div>
+            </div>
+
+            <div class="insights-summary" id="salary-insights-text-desc" style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.45; background: #f8fafc; padding: 10px; border-radius: 12px; border-left: 4px solid var(--pastel-gold);">
+              Strong positive correlation.
+            </div>
+          </section>
+        </div>
+
+        <!-- RIGHT CONTENT: Mockup, Chart & Dataset Table -->
+        <div class="dashboard-content">
           
-          <div class="equation-box">
-            <p class="formula-title">LEARNED REGRESSION EQUATION</p>
-            <div class="formula-display" id="formula-math">
-              Battery % = <span class="highlight">m</span> * SOT + <span class="highlight">c</span>
+          <!-- Mockup Showcase Card -->
+          <section class="card" style="padding: 20px;">
+            <div class="card-header" style="margin-bottom: 10px;">
+              <span class="card-icon">
+                <svg class="card-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                  <line x1="12" y1="4" x2="12" y2="20"></line>
+                </svg>
+              </span>
+              <h2>Interactive Paycheck Showcase</h2>
             </div>
-          </div>
-
-          <div class="metrics-grid">
-            <div class="metric-tile">
-              <span class="metric-title">Goodness of Fit (R²)</span>
-              <span class="metric-val" id="metrics-r2">0.962</span>
-              <span class="metric-meta" id="r2-descriptor">Excellent fit</span>
-            </div>
-            <div class="metric-tile">
-              <span class="metric-title" id="metrics-slope-label">Slope Coefficient</span>
-              <span class="metric-val" id="metrics-slope">-8.24%</span>
-            </div>
-            <div class="metric-tile">
-              <span class="metric-title">Model Intercept</span>
-              <span class="metric-val" id="metrics-intercept">98.5%</span>
-            </div>
-            <div class="metric-tile">
-              <span class="metric-title">Total Samples (N)</span>
-              <span class="metric-val" id="metrics-samples">80</span>
-              <span class="metric-meta">Coordinates</span>
-            </div>
-          </div>
-
-          <div class="insights-summary" id="insights-text">
-            Strong negative correlation.
-          </div>
-        </section>
-      </div>
-
-      <!-- ==================== RIGHT CONTENT ==================== -->
-      <div class="dashboard-content">
-        
-        <!-- Showcase Mockup Card (Dynamic Content Panel) -->
-        <section class="card mockup-card">
-          <div class="card-header">
-            <span class="card-icon">
-              <svg class="card-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
-                <polyline points="2 17 12 22 22 17"></polyline>
-                <polyline points="2 12 12 17 22 12"></polyline>
-              </svg>
-            </span>
-            <h2 id="showcase-card-title">Interactive Visual Showcase</h2>
-          </div>
-
-          <!-- Mockup: Battery SOT Phone -->
-          <div class="showcase-content-box" id="showcase-battery" style="display:flex; justify-content:center; align-items:center; min-height:360px;">
-            <div class="phone-showcase" id="phone-tilt-wrapper">
-              <div class="phone-frame" id="phone-3d">
-                <div class="phone-notch">
-                  <div class="phone-camera"></div>
-                  <div class="phone-speaker"></div>
-                </div>
-
-                <div class="phone-screen" id="phone-screen-screen">
-                  <div class="phone-status">
-                    <span id="phone-status-time">11:58</span>
-                    <div style="display:flex; align-items:center; gap: 4px;">
-                      <span>5G</span>
-                      <div class="phone-battery-bar">
-                        <div class="phone-battery-bar-fill" id="phone-bar-battery-fill"></div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="phone-notification" id="low-power-notification">
-                    <div class="notification-title">
-                      <span>🔋 System Warning</span>
-                      <span style="font-size: 0.6rem; opacity: 0.7;">Now</span>
-                    </div>
-                    <div class="notification-body" id="low-power-notification-text">
-                      Battery level is low (15%). Performance is restricted.
-                    </div>
-                  </div>
-
-                  <div class="phone-display">
-                    <span class="phone-label">Remaining Charge</span>
-                    <div class="phone-percent" id="phone-readout-percentage">100<span>%</span></div>
-                    <div class="phone-sot" id="phone-readout-sot">Active: 0.0 hrs</div>
-                    <div class="phone-health" id="phone-readout-health">Battery Health: 99%</div>
-                    <div class="phone-badge" id="phone-readout-badge">Web Browsing</div>
-                  </div>
-
-                  <div class="phone-fluid-wave" id="phone-liquid-wave">
-                    <svg class="wave-element" viewBox="0 0 120 120" preserveAspectRatio="none">
-                      <path class="wave-path-back" d="M0,15 C30,25 40,5 70,15 C100,25 110,10 120,15 L120,120 L0,120 Z"></path>
-                      <path class="wave-path-front" d="M0,15 C20,5 50,25 80,10 C100,20 110,5 120,15 L120,120 L0,120 Z"></path>
-                    </svg>
-                  </div>
-
-                  <div class="phone-charging-flash" id="charging-flash">
-                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#f2aa6b" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-                    </svg>
-                  </div>
-
-                  <div class="phone-home-line">
-                    <div class="phone-home-line-bar"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Mockup: Salary pay statement -->
-          <div class="showcase-content-box" id="showcase-salary" style="display:none; justify-content:center; align-items:center; min-height:300px;">
             <div class="salary-showcase" id="paycheck-tilt-wrapper">
               <div class="paycheck-frame" id="paycheck-3d">
                 <div class="paycheck-header">
@@ -1379,104 +1397,227 @@
                 </div>
               </div>
             </div>
-          </div>
+          </section>
 
-          <!-- Mockup: Plotly 3D scatter surface -->
-          <div class="showcase-content-box" id="showcase-income" style="display:none; width:100%;">
-            <div class="plotly-showcase" style="width:100%;">
-              <div class="plotly-container" id="plotlyIncome3d"></div>
+          <!-- Dedicated Regression Chart Card -->
+          <section class="card">
+            <div class="card-header">
+              <span class="card-icon">
+                <svg class="card-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="20" x2="18" y2="10"></line>
+                  <line x1="12" y1="20" x2="12" y2="4"></line>
+                  <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+              </span>
+              <h2>Regression Line Mapping</h2>
             </div>
-          </div>
-        </section>
+            <div class="chart-container" style="height: 300px; position: relative; width: 100%;">
+              <canvas id="salary-regression-chart-canvas"></canvas>
+            </div>
+          </section>
 
-        <!-- 2D Regression Charts Card (Hidden for Multiple Regression) -->
-        <section class="card chart-card" id="card-2d-charts">
-          <div class="card-header">
-            <span class="card-icon">
-              <svg class="card-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="18" y1="20" x2="18" y1="10"></line>
-                <line x1="12" y1="20" x2="12" y1="4"></line>
-                <line x1="6" y1="20" x2="6" y1="14"></line>
-              </svg>
-            </span>
-            <h2 id="charts-card-title">Regression Diagnostics</h2>
-          </div>
-
-          <!-- Trio plots grids -->
-          <div class="plots-grid-layout">
-            <div class="plot-canvas-box">
-              <span class="plot-box-label" id="plot-label-1">1. Remaining Capacity (%)</span>
-              <div class="plot-wrapper-small">
-                <canvas id="chartRemaining"></canvas>
+          <!-- Training Dataset Table Card -->
+          <section class="card">
+            <div class="card-header" style="justify-content: space-between;">
+              <div style="display:flex; align-items:center; gap: 0.65rem;">
+                <span class="card-icon">
+                  <svg class="card-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22c5.523 0 10-2.239 10-5V5c0-2.761-4.477-5-10-5S2 2.239 2 5v12c0 2.761 4.477 5 10 5z"></path>
+                  </svg>
+                </span>
+                <h2>Training Dataset Hub</h2>
+              </div>
+              <div class="preset-selector-container" style="display: flex; align-items: center; gap: 8px;">
+                <label for="salary-preset-select" style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">Profile:</label>
+                <select id="salary-preset-select" class="select-style" style="padding: 4px 10px; border-radius: 50px;" onchange="handleSalaryPresetChange(this)">
+                  <option value="corporate" selected>Tech Industry Corporate</option>
+                  <option value="tech">High-Growth Startups</option>
+                  <option value="noisy">Volatile Consulting</option>
+                </select>
               </div>
             </div>
 
-            <div class="plot-canvas-box">
-              <span class="plot-box-label" id="plot-label-2">2. Consumed Battery (%)</span>
-              <div class="plot-wrapper-small">
-                <canvas id="chartConsumed"></canvas>
-              </div>
+            <div class="table-container" style="max-height: 200px; overflow-y: auto; border-radius: 12px; border: 1px solid var(--panel-border); background: white;">
+              <table style="width: 100%; border-collapse: collapse;">
+                <thead style="position: sticky; top: 0; background: #f8fafc; box-shadow: 0 1px 0 var(--panel-border); z-index: 2;">
+                  <tr>
+                    <th style="padding: 10px; font-family: var(--font-headers); font-size: 0.8rem; color: var(--text-muted); text-align: left;">Years of Exp (X)</th>
+                    <th style="padding: 10px; font-family: var(--font-headers); font-size: 0.8rem; color: var(--text-muted); text-align: left;">Annual Salary ($) (Y)</th>
+                    <th style="width: 80px; text-align: center; padding: 10px; font-family: var(--font-headers); font-size: 0.8rem; color: var(--text-muted);">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="salary-table-body-rows">
+                  <!-- JS rows -->
+                </tbody>
+              </table>
             </div>
 
-            <div class="plot-canvas-box">
-              <span class="plot-box-label" id="plot-label-3">3. Prediction Variance (%)</span>
-              <div class="plot-wrapper-small">
-                <canvas id="chartResiduals"></canvas>
-              </div>
+            <!-- Ingest Form inline row -->
+            <form onsubmit="handleSalaryTableAddSubmit(event)" style="display: flex; gap: 10px; background: white; padding: 8px; border-radius: 12px; border: 1px solid var(--panel-border); margin-top: 10px;">
+              <input type="number" id="salary-add-exp" placeholder="Exp (e.g. 5.5)" step="0.1" min="0" max="30" required style="flex:1; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--panel-border); outline:none;">
+              <input type="number" id="salary-add-salary" placeholder="Salary ($)" min="0" required style="flex:1; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--panel-border); outline:none;">
+              <button type="submit" class="btn btn-primary" style="background: var(--pastel-gold); color: var(--text-dark); box-shadow: none;">Add Point</button>
+            </form>
+            <div style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center;">
+              <button class="btn btn-secondary btn-reset" style="padding: 4px 10px; font-size: 0.75rem;" onclick="restoreSalaryDatasetDefaults(event)">Reset Defaults</button>
             </div>
-          </div>
+          </section>
 
-          <!-- Sweep dedicated graph inspector slider -->
-          <div class="graph-slider-container">
-            <div class="slider-header" style="margin-bottom: 5px;">
-              <span class="slider-label" id="bottom-slider-label" style="font-size: 0.8rem; font-weight: 700;">Sweep SOT Graph Inspector</span>
-              <div class="slider-display" id="graph-sweep-display" style="font-size: 1.4rem;">5.0<span>hrs</span></div>
-            </div>
-            <input type="range" class="control-slider" id="graph-sweep-slider" min="0" max="12.0" step="0.1" value="5.0" style="margin: 0;" oninput="handleSweepSliderInput(this)">
-          </div>
-        </section>
-
-        <!-- Dataset Hub Card -->
-        <section class="card dataset-card">
-          <div class="card-header">
-            <span class="card-icon">
-              <svg class="card-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 22c5.523 0 10-2.239 10-5V5c0-2.761-4.477-5-10-5S2 2.239 2 5v12c0 2.761 4.477 5 10 5z"></path>
-                <path d="M22 5c0 2.761-4.477 5-10 5S2 7.761 2 5"></path>
-                <path d="M2 10c0 2.761 4.477 5 10 5s10-2.239 10-5"></path>
-                <path d="M2 15c0 2.761 4.477 5 10 5s10-2.239 10-5"></path>
-              </svg>
-            </span>
-            <h2>Training Dataset Hub</h2>
-          </div>
-          
-          <div class="table-container">
-            <table id="dataset-table">
-              <thead id="table-head">
-                <!-- Headers are updated dynamically by JS -->
-              </thead>
-              <tbody id="table-body">
-                <!-- Rows populated dynamically -->
-              </tbody>
-            </table>
-          </div>
-
-          <!-- Add coordinate data inline form -->
-          <form id="add-data-form" class="add-data-row" onsubmit="submitPoint(event)">
-            <!-- Inputs populated dynamically by JS based on model -->
-            <div id="add-form-inputs-container" style="display:flex; flex:1; gap:10px;"></div>
-            <button type="submit" class="btn btn-primary" id="btn-add">Add Point</button>
-          </form>
-        </section>
+        </div>
       </div>
-
     </main>
 
-    <!-- Footer -->
+    <!-- ==================== WORKSPACE 3: MULTIPLE LINEAR REGRESSION ==================== -->
+    <main class="workspace-section" id="workspace-income">
+      <div class="top-section-grid">
+        <!-- Left controller card -->
+        <section class="card">
+          <div>
+            <div class="card-header">
+              <h2>Multiple Regression Sandbox</h2>
+              <span class="badge" style="color: var(--pastel-blue); border-color: rgba(123,181,207,0.3);">Double Feature</span>
+            </div>
+
+            <!-- Age Slider -->
+            <div class="slider-box">
+              <div class="slider-header">
+                <span class="slider-label">Age coordinate (x₁)</span>
+                <div class="slider-display" id="income-age-display-val" style="color: var(--pastel-blue);">37<span>yrs</span></div>
+              </div>
+              <input type="range" class="control-slider" id="income-age-slider-control" min="20" max="60" step="1" value="37" oninput="handleSliderInput(this, 'income-age')">
+              <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted);">
+                <span>20 (Young)</span>
+                <span>40</span>
+                <span>60 (Senior)</span>
+              </div>
+            </div>
+
+            <!-- Experience Slider -->
+            <div class="slider-box">
+              <div class="slider-header">
+                <span class="slider-label">Experience coordinate (x₂)</span>
+                <div class="slider-display" id="income-exp-display-val" style="color: var(--pastel-blue);">5.0<span>yrs</span></div>
+              </div>
+              <input type="range" class="control-slider" id="income-exp-slider-control" min="0" max="20" step="0.5" value="5.0" oninput="handleSliderInput(this, 'income-exp')">
+              <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted);">
+                <span>0.0y (Entry)</span>
+                <span>10.0y</span>
+                <span>20.0y (Executive)</span>
+              </div>
+            </div>
+
+            <!-- Predicted output box -->
+            <div class="paycheck-amount-box" style="margin-top: 15px; background: rgba(123, 181, 207, 0.05); border-color: rgba(123, 181, 207, 0.15);">
+              <div class="paycheck-amount-num" id="income-readout-predicted" style="color: var(--pastel-blue); font-size: 2rem;">$40,250</div>
+              <div class="paycheck-amount-label">Predicted Income (ŷ)</div>
+            </div>
+          </div>
+
+          <div class="ingest-form">
+            <h3>Inject ML Coordinate Trio</h3>
+            <form onsubmit="submitPoint(event, 'income')">
+              <div class="form-inputs" style="grid-template-columns: 1fr 1fr 1fr 0.8fr;">
+                <input type="number" id="income-input-age" min="18" max="100" placeholder="Age" required>
+                <input type="number" id="income-input-exp" min="0" max="50" step="0.5" placeholder="Exp" required>
+                <input type="number" id="income-input-val" min="0" step="100" placeholder="Income ($)" required>
+                <button type="submit" class="btn" style="background: var(--pastel-blue); padding: 10px 5px;">Retrain</button>
+              </div>
+            </form>
+            <div style="margin-top: 15px; display: flex; justify-content: flex-end;">
+              <button class="btn btn-reset" onclick="resetDataset('income')">Restore Default Data</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Right 3D surface plot showcase -->
+        <section class="card" style="padding: 15px; justify-content: center;">
+          <div class="plotly-showcase">
+            <div class="plotly-container" id="plotlyIncome3d"></div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- ==================== COMMON BOTTOM SECTION: 2D PLOTS & FORMULA HUD ==================== -->
+    <div class="bottom-section-grid" id="bottom-plots-wrapper">
+      <section class="plot-card">
+        <div class="card-header" style="margin-bottom: 10px; border-bottom: none; padding-bottom: 0;">
+          <h2 id="bottom-card-title">Interactive Regression Mapping</h2>
+          <span class="badge" id="bottom-card-badge">Trio Analysis</span>
+        </div>
+        
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: -10px; margin-bottom: 10px;" id="bottom-card-subtitle">
+          Use the graph slider below to sweep SOT coordinates. The best-fit lines are computed directly by the FastAPI regression engine.
+        </p>
+
+        <!-- Trio graph canvas layouts -->
+        <div class="plots-grid-layout" id="trio-plots-grid">
+          <div class="plot-canvas-box">
+            <span class="plot-box-label" id="plot-label-1">1. Remaining Capacity (%)</span>
+            <div class="plot-wrapper-small">
+              <canvas id="chartRemaining"></canvas>
+            </div>
+          </div>
+
+          <div class="plot-canvas-box">
+            <span class="plot-box-label" id="plot-label-2">2. Consumed Battery (%)</span>
+            <div class="plot-wrapper-small">
+              <canvas id="chartConsumed"></canvas>
+            </div>
+          </div>
+
+          <div class="plot-canvas-box">
+            <span class="plot-box-label" id="plot-label-3">3. Prediction Variance (%)</span>
+            <div class="plot-wrapper-small">
+              <canvas id="chartResiduals"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dedicated Graph Slider sweep tool -->
+        <div class="graph-slider-container" id="bottom-slider-container">
+          <div class="slider-header" style="margin-bottom: 5px;">
+            <span class="slider-label" id="bottom-slider-label" style="font-size: 0.8rem; font-weight: 700;">Sweep SOT Graph Inspector</span>
+            <div class="slider-display" id="graph-sweep-display" style="font-size: 1.4rem;">5.0<span>hrs</span></div>
+          </div>
+          <input type="range" id="graph-sweep-slider" min="0" max="12.0" step="0.1" value="5.0" style="margin: 0;" oninput="handleSweepSliderInput(this)">
+        </div>
+
+        <!-- Metrics parameters layout row -->
+        <div class="metrics-summary-bar">
+          <div class="formula-display-box" style="flex: 1;">
+            <span>Fitted Regression Formula</span>
+            <div id="metrics-formula-text">Battery % = -8.23 * SOT + 98.45</div>
+          </div>
+
+          <div class="metric-data-cell">
+            <span class="metric-data-label">Goodness of Fit (R²)</span>
+            <span class="metric-data-value" id="metrics-r2">0.962</span>
+          </div>
+
+          <div class="metric-data-cell">
+            <span class="metric-data-label" id="metric-slope-label">Slope Coefficient</span>
+            <span class="metric-data-value" id="metrics-slope">-8.24%</span>
+          </div>
+
+          <div class="metric-data-cell">
+            <span class="metric-data-label">Model Intercept</span>
+            <span class="metric-data-value" id="metrics-intercept">98.5%</span>
+          </div>
+
+          <div class="metric-data-cell">
+            <span class="metric-data-label">Sample Coordinates (N)</span>
+            <span class="metric-data-value" id="metrics-samples">80</span>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- FOOTER -->
     <footer class="app-footer">
-      <p>Designed with premium pastel aesthetics & dynamic reactive ML equations.</p>
-      <button class="btn-text" onclick="restoreActiveDatasetDefaults()">Reset to Default Dataset</button>
+      <span>VoltAI Engine — Developed with FastAPI, Scikit-learn, Web Audio SFX, and Plotly 3D</span>
     </footer>
+
   </div>
 
   <script>
@@ -1589,7 +1730,7 @@
 
     const sound = new AudioEngine();
 
-    // Default coordinates datasets clones for offline fallback
+    // Default 80 training coordinates for standalone Serverless Fallback mode (Battery)
     const DEFAULT_BATTERY_COORDINATES = [
       {screen_time: 1.0, battery_percent: 88.8}, {screen_time: 1.1, battery_percent: 89.1},
       {screen_time: 1.2, battery_percent: 89.4}, {screen_time: 1.3, battery_percent: 89.8},
@@ -1633,6 +1774,7 @@
       {screen_time: 9.9, battery_percent: 14.1}, {screen_time: 10.0, battery_percent: 14.4}
     ];
 
+    // Default 7 training coordinates for Salary model fallback
     const DEFAULT_SALARY_COORDINATES = [
       {experience: 1.0, salary: 20000}, {experience: 2.0, salary: 45000},
       {experience: 3.0, salary: 67890}, {experience: 4.0, salary: 82290},
@@ -1640,6 +1782,7 @@
       {experience: 7.0, salary: 99999}
     ];
 
+    // Default 20 training coordinates for Income model fallback
     const DEFAULT_INCOME_COORDINATES = [
       {age: 25, experience: 1, income: 30450}, {age: 30, experience: 3, income: 35670},
       {age: 47, experience: 2, income: 31580}, {age: 32, experience: 5, income: 40130},
@@ -1653,11 +1796,48 @@
       {age: 44, experience: 9, income: 44190}, {age: 37, experience: 10, income: 48700}
     ];
 
-    // Global Active State
+    // Application State
+    let activeMainTab = "simple"; // "simple" or "multiple"
     let activePredictor = "battery"; // "battery", "salary", or "income"
     let isServerless = false;
 
-    // Local Variables
+    // Default Salary Presets for sub-workspace
+    const SALARY_PRESETS = {
+      corporate: [
+        { x: 1.0, y: 20000 },
+        { x: 2.0, y: 45000 },
+        { x: 3.0, y: 67890 },
+        { x: 4.0, y: 82290 },
+        { x: 5.0, y: 89820 },
+        { x: 6.0, y: 93083 },
+        { x: 7.0, y: 99999 }
+      ],
+      tech: [
+        { x: 1.0, y: 35000 },
+        { x: 2.0, y: 58000 },
+        { x: 3.0, y: 82000 },
+        { x: 4.0, y: 105000 },
+        { x: 5.0, y: 125000 },
+        { x: 6.0, y: 145000 },
+        { x: 7.0, y: 170000 }
+      ],
+      noisy: [
+        { x: 1.0, y: 15000 },
+        { x: 2.0, y: 65000 },
+        { x: 3.0, y: 30000 },
+        { x: 4.0, y: 95000 },
+        { x: 5.0, y: 45000 },
+        { x: 6.0, y: 110000 },
+        { x: 7.0, y: 85000 }
+      ]
+    };
+
+    let salaryDataset = JSON.parse(JSON.stringify(SALARY_PRESETS.corporate));
+    let salaryPreset = 'corporate';
+    let salaryModel = { m: 0, c: 0, r2: 0, avgX: 0, avgY: 0, n: 0 };
+    let salaryChart = null;
+
+    // Model variables (Battery)
     let currentBatterySot = 5.0;
     let refreshRateMultiplier = 1.0;
     let darkModeMultiplier = 1.0;
@@ -1666,23 +1846,25 @@
     let predictedBattery = 100;
     let hasAlertedLowPower = false;
 
+    // Model variables (Salary)
     let currentSalaryExp = 5.0;
     let predictedSalary = 0;
 
+    // Model variables (Income)
     let currentIncomeAge = 37;
     let currentIncomeExp = 5.0;
     let predictedIncome = 0;
 
-    // Buffer references
+    // Dataset buffers and metrics cache
     let coordinates = [];
     let metrics = {};
 
-    // Chart instances
+    // 2D Chart references
     let chartRemainingInst = null;
     let chartConsumedInst = null;
     let chartResidualsInst = null;
 
-    // DOM references cache
+    // DOM References Cache
     const phoneScreen = document.getElementById('phone-screen-screen');
     const phoneBatteryFill = document.getElementById('phone-bar-battery-fill');
     const phoneReadoutPercent = document.getElementById('phone-readout-percentage');
@@ -1697,17 +1879,17 @@
     const paycheckReadoutSalary = document.getElementById('paycheck-readout-salary');
     const paycheckReadoutExp = document.getElementById('paycheck-readout-exp');
     const paycheckReadoutWeekly = document.getElementById('paycheck-readout-weekly');
-    const paycheckProgressFill = document.getElementById('paycheck-progress-fill');
     const paycheckPercentileLabel = document.getElementById('paycheck-percentile-label');
+    const paycheckProgressFill = document.getElementById('paycheck-progress-fill');
 
-    const formulaMath = document.getElementById('formula-math');
+    const metricsFormula = document.getElementById('metrics-formula-text');
     const metricsR2 = document.getElementById('metrics-r2');
     const metricsSlope = document.getElementById('metrics-slope');
     const metricsIntercept = document.getElementById('metrics-intercept');
     const metricsSamples = document.getElementById('metrics-samples');
 
     window.addEventListener('DOMContentLoaded', () => {
-      // 3D Parallax Hover bindings
+      // 3D Tilt Hover physics
       bindTiltHoverPhysics('phone-tilt-wrapper', 'phone-3d');
       bindTiltHoverPhysics('paycheck-tilt-wrapper', 'paycheck-3d');
 
@@ -1719,7 +1901,6 @@
         document.getElementById('phone-status-time').textContent = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
       }, 60000);
 
-      // Scroll coupler drain linking
       window.addEventListener('scroll', () => {
         if (activePredictor === "battery" && scrollCouple) {
           const docHeight = document.documentElement.scrollHeight - window.innerHeight;
@@ -1729,12 +1910,11 @@
           
           if (val !== currentBatterySot) {
             currentBatterySot = val;
-            document.getElementById('battery-sot-slider').value = val;
-            document.getElementById('battery-sot-numeric').value = val;
+            document.getElementById('battery-sot-slider-control').value = val;
             document.getElementById('graph-sweep-slider').value = val;
+            document.getElementById('battery-sot-display-val').innerHTML = val.toFixed(1) + '<span>hrs</span>';
             document.getElementById('graph-sweep-display').innerHTML = val.toFixed(1) + '<span>hrs</span>';
             phoneReadoutSot.textContent = `Active: ${val.toFixed(1)} hrs`;
-            document.getElementById('sandbox-readout-info').textContent = `At ${val.toFixed(1)} hours SOT`;
             
             if (Math.round(val * 10) % 5 === 0) sound.playTick();
             triggerPrediction();
@@ -1742,11 +1922,152 @@
         }
       });
 
-      // Initialize
-      switchPredictor('battery');
+      // Startup
+      syncDatasetState(activePredictor);
     });
 
-    // Parallax Hover Chassis binder
+    // Symmetrical navigation switches
+    function switchMainTab(tab) {
+      if (activeMainTab === tab) return;
+      sound.playClick();
+      activeMainTab = tab;
+      
+      document.getElementById('tab-simple').classList.toggle('active', tab === 'simple');
+      document.getElementById('tab-multiple').classList.toggle('active', tab === 'multiple');
+      document.getElementById('simple-sub-nav').style.display = tab === 'simple' ? 'flex' : 'none';
+
+      if (tab === 'simple') {
+        const activeSub = document.querySelector('.sub-btn.active').id.split('-')[1];
+        switchSubPredictor(activeSub);
+      } else {
+        switchSubPredictor('income');
+      }
+    }
+
+    function switchSubPredictor(predictor) {
+      if (activePredictor === predictor && activeMainTab !== 'multiple') return;
+      sound.playClick();
+      activePredictor = predictor;
+
+      // Toggle active states for sub-nav buttons
+      if (predictor !== 'income') {
+        document.getElementById('sub-battery').classList.toggle('active', predictor === 'battery');
+        document.getElementById('sub-salary').classList.toggle('active', predictor === 'salary');
+      }
+
+      // Show hide workspaces
+      document.getElementById('workspace-battery').classList.toggle('active', predictor === 'battery');
+      document.getElementById('workspace-salary').classList.toggle('active', predictor === 'salary');
+      document.getElementById('workspace-income').classList.toggle('active', predictor === 'income');
+
+      // Toggle bottom plots container vs 3D Plotly container
+      const bottomPlotsWrapper = document.getElementById('bottom-plots-wrapper');
+      if (predictor === 'income') {
+        bottomPlotsWrapper.style.display = 'none';
+        document.documentElement.style.setProperty('--theme-reactive', 'var(--pastel-blue)');
+      } else {
+        bottomPlotsWrapper.style.display = 'block';
+        if (predictor === 'battery') {
+          document.documentElement.style.setProperty('--theme-reactive', 'var(--pastel-green)');
+          document.getElementById('bottom-card-title').textContent = "Interactive Regression Mapping";
+          document.getElementById('bottom-card-badge').textContent = "Trio Analysis";
+          document.getElementById('bottom-card-subtitle').textContent = "Use the sweep slider below to slide the orange prediction points across all three charts.";
+          
+          document.getElementById('plot-label-1').textContent = "1. Remaining Capacity (%)";
+          document.getElementById('plot-label-2').textContent = "2. Consumed Battery (%)";
+          document.getElementById('plot-label-3').textContent = "3. Prediction Variance (%)";
+          
+          document.getElementById('bottom-slider-label').textContent = "Sweep SOT Graph Inspector";
+          document.getElementById('metric-slope-label').textContent = "Draining Slope (m)";
+          
+          // Re-sync sweep slider
+          const slider = document.getElementById('graph-sweep-slider');
+          slider.min = 0; slider.max = 12.0; slider.step = 0.1;
+          slider.value = currentBatterySot;
+          document.getElementById('graph-sweep-display').innerHTML = parseFloat(currentBatterySot).toFixed(1) + '<span>hrs</span>';
+        } else {
+          document.documentElement.style.setProperty('--theme-reactive', 'var(--pastel-gold)');
+          document.getElementById('bottom-card-title').textContent = "Compensation Trend Line";
+          document.getElementById('bottom-card-badge').textContent = "Salary Diagnostics";
+          document.getElementById('bottom-card-subtitle').textContent = "Observe the positive regression correlation line mapped against default compensation data points.";
+          
+          document.getElementById('plot-label-1').textContent = "1. Annual Salary ($)";
+          document.getElementById('plot-label-2').textContent = "2. Weekly Compensation ($)";
+          document.getElementById('plot-label-3').textContent = "3. Prediction Error ($)";
+          
+          document.getElementById('bottom-slider-label').textContent = "Sweep Experience Inspector";
+          document.getElementById('metric-slope-label').textContent = "Salary Coefficient (m)";
+          
+          // Re-sync sweep slider
+          const slider = document.getElementById('graph-sweep-slider');
+          slider.min = 0; slider.max = 15.0; slider.step = 0.1;
+          slider.value = currentSalaryExp;
+          document.getElementById('graph-sweep-display').innerHTML = parseFloat(currentSalaryExp).toFixed(1) + '<span>yrs</span>';
+        }
+      }
+
+      if (predictor === 'salary') {
+        trainSalaryModelLocal();
+        renderSalaryTable();
+        renderSalaryChart();
+        updateSalaryPredictorOutputs();
+      } else {
+        // Re-fetch and render state
+        syncDatasetState(predictor);
+      }
+    }
+
+    // Connect slider input readouts
+    function handleSliderInput(slider, type) {
+      sound.playTick();
+      const val = parseFloat(slider.value);
+      
+      if (type === 'battery') {
+        currentBatterySot = val;
+        document.getElementById('battery-sot-display-val').innerHTML = val.toFixed(1) + '<span>hrs</span>';
+        document.getElementById('graph-sweep-slider').value = val;
+        document.getElementById('graph-sweep-display').innerHTML = val.toFixed(1) + '<span>hrs</span>';
+        phoneReadoutSot.textContent = `Active: ${val.toFixed(1)} hrs`;
+      } else if (type === 'salary') {
+        currentSalaryExp = val;
+        document.getElementById('salary-exp-display-val').innerHTML = val.toFixed(1) + '<span>yrs</span>';
+        document.getElementById('graph-sweep-slider').value = val;
+        document.getElementById('graph-sweep-display').innerHTML = val.toFixed(1) + '<span>yrs</span>';
+        paycheckReadoutExp.textContent = `${val.toFixed(1)} Years`;
+      } else if (type === 'income-age') {
+        currentIncomeAge = val;
+        document.getElementById('income-age-display-val').innerHTML = val + '<span>yrs</span>';
+      } else if (type === 'income-exp') {
+        currentIncomeExp = val;
+        document.getElementById('income-exp-display-val').innerHTML = val.toFixed(1) + '<span>yrs</span>';
+      }
+
+      triggerPrediction();
+    }
+
+    // Sweep graph slider synchronization
+    function handleSweepSliderInput(slider) {
+      sound.playTick();
+      const val = parseFloat(slider.value);
+      
+      if (activePredictor === 'battery') {
+        currentBatterySot = val;
+        document.getElementById('battery-sot-slider-control').value = val;
+        document.getElementById('battery-sot-display-val').innerHTML = val.toFixed(1) + '<span>hrs</span>';
+        document.getElementById('graph-sweep-display').innerHTML = val.toFixed(1) + '<span>hrs</span>';
+        phoneReadoutSot.textContent = `Active: ${val.toFixed(1)} hrs`;
+      } else if (activePredictor === 'salary') {
+        currentSalaryExp = val;
+        document.getElementById('salary-exp-slider-control').value = val;
+        document.getElementById('salary-exp-display-val').innerHTML = val.toFixed(1) + '<span>yrs</span>';
+        document.getElementById('graph-sweep-display').innerHTML = val.toFixed(1) + '<span>yrs</span>';
+        paycheckReadoutExp.textContent = `${val.toFixed(1)} Years`;
+      }
+
+      triggerPrediction();
+    }
+
+    // Parallax Hover Physics binder
     function bindTiltHoverPhysics(wrapperId, frameId) {
       const wrapper = document.getElementById(wrapperId);
       const frame = document.getElementById(frameId);
@@ -1769,202 +2090,14 @@
       });
     }
 
-    // Toggle Tab switch and update UI colors
-    function switchPredictor(predictor) {
-      if (activePredictor === predictor && coordinates.length > 0) return;
-      sound.playClick();
-      activePredictor = predictor;
-
-      // Update Nav active classes
-      document.getElementById('tab-battery').classList.toggle('active', predictor === 'battery');
-      document.getElementById('tab-salary').classList.toggle('active', predictor === 'salary');
-      document.getElementById('tab-income').classList.toggle('active', predictor === 'income');
-
-      // Update color scheme variables
-      if (predictor === 'battery') {
-        document.documentElement.style.setProperty('--primary', '#10b981');
-        document.documentElement.style.setProperty('--primary-light', 'rgba(16, 185, 129, 0.15)');
-      } else if (predictor === 'salary') {
-        document.documentElement.style.setProperty('--primary', '#e5c158');
-        document.documentElement.style.setProperty('--primary-light', 'rgba(229, 193, 88, 0.15)');
-      } else if (predictor === 'income') {
-        document.documentElement.style.setProperty('--primary', '#6366f1');
-        document.documentElement.style.setProperty('--primary-light', 'rgba(99, 102, 241, 0.15)');
-      }
-
-      // Show/Hide controls
-      document.getElementById('controls-battery').style.display = predictor === 'battery' ? 'block' : 'none';
-      document.getElementById('controls-salary').style.display = predictor === 'salary' ? 'block' : 'none';
-      document.getElementById('controls-income').style.display = predictor === 'income' ? 'block' : 'none';
-
-      // Show/Hide mockups
-      document.getElementById('showcase-battery').style.display = predictor === 'battery' ? 'flex' : 'none';
-      document.getElementById('showcase-salary').style.display = predictor === 'salary' ? 'flex' : 'none';
-      document.getElementById('showcase-income').style.display = predictor === 'income' ? 'flex' : 'none';
-
-      // Hide 2D charts card for multiple linear regression
-      const chartCard = document.getElementById('card-2d-charts');
-      if (predictor === 'income') {
-        chartCard.style.display = 'none';
-        document.getElementById('showcase-card-title').textContent = "Interactive 3D Regression Plane";
-      } else {
-        chartCard.style.display = 'block';
-        document.getElementById('showcase-card-title').textContent = "Interactive Visual Showcase";
-        
-        // Update Chart labels
-        if (predictor === 'battery') {
-          document.getElementById('charts-card-title').textContent = "Regression Diagnostics";
-          document.getElementById('plot-label-1').textContent = "1. Remaining Capacity (%)";
-          document.getElementById('plot-label-2').textContent = "2. Consumed Battery (%)";
-          document.getElementById('plot-label-3').textContent = "3. Prediction Variance (%)";
-          document.getElementById('bottom-slider-label').textContent = "Sweep SOT Graph Inspector";
-          document.getElementById('metrics-slope-label').textContent = "Draining Slope (m)";
-          
-          // Re-sync sweep slider range
-          const slider = document.getElementById('graph-sweep-slider');
-          slider.min = 0; slider.max = 12.0; slider.step = 0.1;
-          slider.value = currentBatterySot;
-          document.getElementById('graph-sweep-display').innerHTML = parseFloat(currentBatterySot).toFixed(1) + '<span>hrs</span>';
-        } else {
-          document.getElementById('charts-card-title').textContent = "Compensation Trend Line";
-          document.getElementById('plot-label-1').textContent = "1. Annual Salary ($)";
-          document.getElementById('plot-label-2').textContent = "2. Weekly Compensation ($)";
-          document.getElementById('plot-label-3').textContent = "3. Prediction Error ($)";
-          document.getElementById('bottom-slider-label').textContent = "Sweep Experience Inspector";
-          document.getElementById('metrics-slope-label').textContent = "Salary Coefficient (m)";
-          
-          // Re-sync sweep slider range
-          const slider = document.getElementById('graph-sweep-slider');
-          slider.min = 0; slider.max = 15.0; slider.step = 0.1;
-          slider.value = currentSalaryExp;
-          document.getElementById('graph-sweep-display').innerHTML = parseFloat(currentSalaryExp).toFixed(1) + '<span>yrs</span>';
-        }
-      }
-
-      // Re-build Data table layout template inputs
-      const formContainer = document.getElementById('add-form-inputs-container');
-      if (predictor === 'battery') {
-        formContainer.innerHTML = `
-          <input type="number" id="battery-new-sot" placeholder="SOT Hours" step="0.1" min="0" max="24" required>
-          <input type="number" id="battery-new-percent" placeholder="Battery %" min="0" max="100" required>
-        `;
-      } else if (predictor === 'salary') {
-        formContainer.innerHTML = `
-          <input type="number" id="salary-new-exp" placeholder="Exp Years" step="0.1" min="0" max="50" required>
-          <input type="number" id="salary-new-val" placeholder="Salary ($)" min="0" required>
-        `;
-      } else if (predictor === 'income') {
-        formContainer.innerHTML = `
-          <input type="number" id="income-new-age" placeholder="Age" min="18" max="100" required>
-          <input type="number" id="income-new-exp" placeholder="Exp Years" step="0.5" min="0" max="50" required>
-          <input type="number" id="income-new-val" placeholder="Income ($)" min="0" required>
-        `;
-      }
-
-      // Pull new dataset coordinate values
-      syncDatasetState(predictor);
-    }
-
-    // Connect slider changes -> syncd number inputs
-    function handleSliderControlInput(modelType, slider) {
-      sound.playTick();
-      const val = parseFloat(slider.value);
-
-      if (modelType === 'battery') {
-        currentBatterySot = val;
-        document.getElementById('battery-sot-numeric').value = val;
-        document.getElementById('graph-sweep-slider').value = val;
-        document.getElementById('graph-sweep-display').innerHTML = val.toFixed(1) + '<span>hrs</span>';
-        phoneReadoutSot.textContent = `Active: ${val.toFixed(1)} hrs`;
-        document.getElementById('sandbox-readout-info').textContent = `At ${val.toFixed(1)} hours SOT`;
-      } else if (modelType === 'salary') {
-        currentSalaryExp = val;
-        document.getElementById('salary-exp-numeric').value = val;
-        document.getElementById('graph-sweep-slider').value = val;
-        document.getElementById('graph-sweep-display').innerHTML = val.toFixed(1) + '<span>yrs</span>';
-        paycheckReadoutExp.textContent = `${val.toFixed(1)} Years`;
-        document.getElementById('sandbox-readout-info').textContent = `At ${val.toFixed(1)} years of experience`;
-      } else if (modelType === 'income-age') {
-        currentIncomeAge = val;
-        document.getElementById('income-age-numeric').value = val;
-        document.getElementById('sandbox-readout-info').textContent = `At age ${val} with ${currentIncomeExp.toFixed(1)} years experience`;
-      } else if (modelType === 'income-exp') {
-        currentIncomeExp = val;
-        document.getElementById('income-exp-numeric').value = val;
-        document.getElementById('sandbox-readout-info').textContent = `At age ${currentIncomeAge} with ${val.toFixed(1)} years experience`;
-      }
-
-      triggerPrediction();
-    }
-
-    // Connect synced number input box -> slider
-    function handleNumericBoxInput(modelType, numBox) {
-      let val = parseFloat(numBox.value);
-      if (isNaN(val)) return;
-
-      if (modelType === 'battery') {
-        val = Math.max(0, Math.min(12, val));
-        currentBatterySot = val;
-        document.getElementById('battery-sot-slider').value = val;
-        document.getElementById('graph-sweep-slider').value = val;
-        document.getElementById('graph-sweep-display').innerHTML = val.toFixed(1) + '<span>hrs</span>';
-        phoneReadoutSot.textContent = `Active: ${val.toFixed(1)} hrs`;
-        document.getElementById('sandbox-readout-info').textContent = `At ${val.toFixed(1)} hours SOT`;
-      } else if (modelType === 'salary') {
-        val = Math.max(0, Math.min(15, val));
-        currentSalaryExp = val;
-        document.getElementById('salary-exp-slider').value = val;
-        document.getElementById('graph-sweep-slider').value = val;
-        document.getElementById('graph-sweep-display').innerHTML = val.toFixed(1) + '<span>yrs</span>';
-        paycheckReadoutExp.textContent = `${val.toFixed(1)} Years`;
-        document.getElementById('sandbox-readout-info').textContent = `At ${val.toFixed(1)} years of experience`;
-      } else if (modelType === 'income-age') {
-        val = Math.max(20, Math.min(60, val));
-        currentIncomeAge = val;
-        document.getElementById('income-age-slider').value = val;
-        document.getElementById('sandbox-readout-info').textContent = `At age ${val} with ${currentIncomeExp.toFixed(1)} years experience`;
-      } else if (modelType === 'income-exp') {
-        val = Math.max(0, Math.min(20, val));
-        currentIncomeExp = val;
-        document.getElementById('income-exp-slider').value = val;
-        document.getElementById('sandbox-readout-info').textContent = `At age ${currentIncomeAge} with ${val.toFixed(1)} years experience`;
-      }
-
-      triggerPrediction();
-    }
-
-    // Sweep Inspector Synchronization
-    function handleSweepSliderInput(slider) {
-      sound.playTick();
-      const val = parseFloat(slider.value);
-      
-      if (activePredictor === 'battery') {
-        currentBatterySot = val;
-        document.getElementById('battery-sot-slider').value = val;
-        document.getElementById('battery-sot-numeric').value = val;
-        document.getElementById('graph-sweep-display').innerHTML = val.toFixed(1) + '<span>hrs</span>';
-        phoneReadoutSot.textContent = `Active: ${val.toFixed(1)} hrs`;
-        document.getElementById('sandbox-readout-info').textContent = `At ${val.toFixed(1)} hours SOT`;
-      } else if (activePredictor === 'salary') {
-        currentSalaryExp = val;
-        document.getElementById('salary-exp-slider').value = val;
-        document.getElementById('salary-exp-numeric').value = val;
-        document.getElementById('graph-sweep-display').innerHTML = val.toFixed(1) + '<span>yrs</span>';
-        paycheckReadoutExp.textContent = `${val.toFixed(1)} Years`;
-        document.getElementById('sandbox-readout-info').textContent = `At ${val.toFixed(1)} years of experience`;
-      }
-
-      triggerPrediction();
-    }
-
-    // Scroll Linked Draining modifier toggle
+    // Toggle scroll draining mode
     function toggleScrollCouple() {
       sound.playClick();
       scrollCouple = !scrollCouple;
       document.getElementById('scroll-toggle-box').classList.toggle('active', scrollCouple);
     }
 
-    // Fluid Mode modifier toggle
+    // Hardware modifiers overrides
     function toggleRefreshHz() {
       sound.playClick();
       if (refreshRateMultiplier === 1.0) {
@@ -1977,7 +2110,6 @@
       triggerPrediction();
     }
 
-    // OLED dark mode toggle
     function toggleOledMode() {
       sound.playClick();
       if (darkModeMultiplier === 1.0) {
@@ -1992,82 +2124,7 @@
       triggerPrediction();
     }
 
-    // Reset current active workspace inputs to defaults
-    function resetActiveSliders() {
-      sound.playClick();
-      if (activePredictor === 'battery') {
-        currentBatterySot = 5.0;
-        document.getElementById('battery-sot-slider').value = 5.0;
-        document.getElementById('battery-sot-numeric').value = 5.0;
-        document.getElementById('graph-sweep-slider').value = 5.0;
-        document.getElementById('graph-sweep-display').innerHTML = '5.0<span>hrs</span>';
-        phoneReadoutSot.textContent = `Active: 5.0 hrs`;
-        document.getElementById('sandbox-readout-info').textContent = `At 5.0 hours SOT`;
-      } else if (activePredictor === 'salary') {
-        currentSalaryExp = 5.0;
-        document.getElementById('salary-exp-slider').value = 5.0;
-        document.getElementById('salary-exp-numeric').value = 5.0;
-        document.getElementById('graph-sweep-slider').value = 5.0;
-        document.getElementById('graph-sweep-display').innerHTML = '5.0<span>yrs</span>';
-        paycheckReadoutExp.textContent = `5.0 Years`;
-        document.getElementById('sandbox-readout-info').textContent = `At 5.0 years of experience`;
-      } else if (activePredictor === 'income') {
-        currentIncomeAge = 37;
-        currentIncomeExp = 5.0;
-        document.getElementById('income-age-slider').value = 37;
-        document.getElementById('income-age-numeric').value = 37;
-        document.getElementById('income-exp-slider').value = 5.0;
-        document.getElementById('income-exp-numeric').value = 5.0;
-        document.getElementById('sandbox-readout-info').textContent = `At age 37 with 5.0 years experience`;
-      }
-      triggerPrediction();
-    }
-
-    // Set inputs to mean of active dataset
-    function useActiveDatasetMean() {
-      sound.playClick();
-      if (coordinates.length === 0) return;
-      
-      if (activePredictor === 'battery') {
-        let sum = 0;
-        coordinates.forEach(c => sum += c.screen_time);
-        const mean = parseFloat((sum / coordinates.length).toFixed(1));
-        currentBatterySot = mean;
-        document.getElementById('battery-sot-slider').value = mean;
-        document.getElementById('battery-sot-numeric').value = mean;
-        document.getElementById('graph-sweep-slider').value = mean;
-        document.getElementById('graph-sweep-display').innerHTML = mean.toFixed(1) + '<span>hrs</span>';
-        phoneReadoutSot.textContent = `Active: ${mean.toFixed(1)} hrs`;
-        document.getElementById('sandbox-readout-info').textContent = `At ${mean.toFixed(1)} hours SOT`;
-      } else if (activePredictor === 'salary') {
-        let sum = 0;
-        coordinates.forEach(c => sum += c.experience);
-        const mean = parseFloat((sum / coordinates.length).toFixed(1));
-        currentSalaryExp = mean;
-        document.getElementById('salary-exp-slider').value = mean;
-        document.getElementById('salary-exp-numeric').value = mean;
-        document.getElementById('graph-sweep-slider').value = mean;
-        document.getElementById('graph-sweep-display').innerHTML = mean.toFixed(1) + '<span>yrs</span>';
-        paycheckReadoutExp.textContent = `${mean.toFixed(1)} Years`;
-        document.getElementById('sandbox-readout-info').textContent = `At ${mean.toFixed(1)} years of experience`;
-      } else if (activePredictor === 'income') {
-        let sumAge = 0, sumExp = 0;
-        coordinates.forEach(c => { sumAge += c.age; sumExp += c.experience; });
-        const meanAge = Math.round(sumAge / coordinates.length);
-        const meanExp = parseFloat((sumExp / coordinates.length).toFixed(1));
-        
-        currentIncomeAge = meanAge;
-        currentIncomeExp = meanExp;
-        document.getElementById('income-age-slider').value = meanAge;
-        document.getElementById('income-age-numeric').value = meanAge;
-        document.getElementById('income-exp-slider').value = meanExp;
-        document.getElementById('income-exp-numeric').value = meanExp;
-        document.getElementById('sandbox-readout-info').textContent = `At age ${meanAge} with ${meanExp.toFixed(1)} years experience`;
-      }
-      triggerPrediction();
-    }
-
-    // Pull database states
+    // Synchronize dataset model buffers
     function syncDatasetState(modelName) {
       fetch(`/api/${modelName}/data`)
         .then(res => {
@@ -2077,8 +2134,11 @@
         .then(data => {
           coordinates = data;
           isServerless = false;
-          // Visual badges update
-          document.querySelectorAll('.badge').forEach(b => b.textContent = "Simulation Active");
+          // Visual Badge Reset
+          document.querySelectorAll('.badge')[0].textContent = "Simulation Settings";
+          document.querySelectorAll('.badge')[1].textContent = "Linear Regression";
+          document.querySelectorAll('.badge')[2].textContent = "Double Feature";
+          
           return fetch(`/api/${modelName}/metrics`);
         })
         .then(res => {
@@ -2088,7 +2148,6 @@
         .then(met => {
           metrics = met;
           updateMetricsHUD();
-          buildTableHTML();
           if (modelName !== 'income') {
             renderThreeCharts();
           } else {
@@ -2097,39 +2156,39 @@
           triggerPrediction();
         })
         .catch(err => {
-          console.warn(`FastAPI Server offline, running ${modelName} in serverless fallback mode: `, err);
+          console.warn(`FastAPI Server offline, running ${modelName} in serverless mode: `, err);
           isServerless = true;
-          // Set badges to offline mode
-          document.querySelectorAll('.badge').forEach(b => b.textContent = "Offline Demo Mode");
+          // Set visual indicators
+          document.querySelectorAll('.badge')[0].textContent = "Offline Demo Mode";
+          document.querySelectorAll('.badge')[1].textContent = "Offline Demo Mode";
+          document.querySelectorAll('.badge')[2].textContent = "Offline Demo Mode";
+          
           runServerlessMode(modelName);
         });
     }
 
-    // Serverless browser calculations
+    // Run solver locally in browser
     function runServerlessMode(modelName) {
       if (modelName === 'battery') {
         coordinates = JSON.parse(JSON.stringify(DEFAULT_BATTERY_COORDINATES));
         metrics = trainSimpleModelJS('screen_time', 'battery_percent');
         updateMetricsHUD();
-        buildTableHTML();
         renderThreeCharts();
       } else if (modelName === 'salary') {
         coordinates = JSON.parse(JSON.stringify(DEFAULT_SALARY_COORDINATES));
         metrics = trainSimpleModelJS('experience', 'salary');
         updateMetricsHUD();
-        buildTableHTML();
         renderThreeCharts();
       } else if (modelName === 'income') {
         coordinates = JSON.parse(JSON.stringify(DEFAULT_INCOME_COORDINATES));
         metrics = trainMultipleModelJS();
         updateMetricsHUD();
-        buildTableHTML();
         renderPlotly3D();
       }
       triggerPrediction();
     }
 
-    // OLS Solvers
+    // OLS Simple Regression Solver in JS
     function trainSimpleModelJS(xKey, yKey) {
       const n = coordinates.length;
       if (n < 2) return { r2: 1.0, slope: [0], intercept: 100, n: n };
@@ -2153,6 +2212,7 @@
       const slope = den === 0 ? 0 : num / den;
       const intercept = avgY - slope * avgX;
       
+      // Calculate R2
       let sumSqErr = 0, sumSqTot = 0;
       for (let i = 0; i < n; i++) {
         const pred = slope * coordinates[i][xKey] + intercept;
@@ -2163,9 +2223,15 @@
       }
       const r2 = sumSqTot === 0 ? 1.0 : 1.0 - (sumSqErr / sumSqTot);
       
-      return { r2: r2, slope: [slope], intercept: intercept, n: n };
+      return {
+        r2: r2,
+        slope: [slope],
+        intercept: intercept,
+        n: n
+      };
     }
 
+    // OLS Multiple Regression Solver in JS (2 features)
     function trainMultipleModelJS() {
       const n = coordinates.length;
       if (n < 3) return { r2: 1.0, slope: [0, 0], intercept: 35000, n: n };
@@ -2202,6 +2268,7 @@
       
       const intercept = avgY - w1 * avgX1 - w2 * avgX2;
       
+      // Calculate R2
       let sumSqErr = 0, sumSqTot = 0;
       for (let i = 0; i < n; i++) {
         const pred = w1 * coordinates[i].age + w2 * coordinates[i].experience + intercept;
@@ -2212,22 +2279,25 @@
       }
       const r2 = sumSqTot === 0 ? 1.0 : 1.0 - (sumSqErr / sumSqTot);
       
-      return { r2: r2, slope: [w1, w2], intercept: intercept, n: n };
+      return {
+        r2: r2,
+        slope: [w1, w2],
+        intercept: intercept,
+        n: n
+      };
     }
 
-    // Call ML predict wrapper
+    // Call predict wrapper
     function triggerPrediction() {
       if (activePredictor === 'battery') {
-        document.getElementById('sandbox-readout-label').textContent = "EXPECTED CHARGE";
-        document.getElementById('sandbox-readout-unit').textContent = "%";
-        
         appDrainMultiplier = parseFloat(document.getElementById('app-drain-select').value);
         phoneReadoutBadge.textContent = document.getElementById('app-drain-select').options[document.getElementById('app-drain-select').selectedIndex].text.split(' (')[0];
         
         if (isServerless) {
           const effectiveSot = currentBatterySot * refreshRateMultiplier * darkModeMultiplier * appDrainMultiplier;
           predictedBattery = Math.max(0.0, Math.min(100.0, metrics.slope[0] * effectiveSot + metrics.intercept));
-          updateBatteryOutputs(predictedBattery);
+          updateMobileVisuals(predictedBattery);
+          updateBatteryChartsTarget();
           return;
         }
 
@@ -2246,41 +2316,20 @@
         .then(res => res.json())
         .then(result => {
           predictedBattery = result.predicted_val;
-          updateBatteryOutputs(predictedBattery);
+          updateMobileVisuals(predictedBattery);
+          updateBatteryChartsTarget();
         });
       } 
       
       else if (activePredictor === 'salary') {
-        document.getElementById('sandbox-readout-label').textContent = "EXPECTED SALARY";
-        document.getElementById('sandbox-readout-unit').textContent = "$";
-        
-        if (isServerless) {
-          predictedSalary = Math.max(0.0, metrics.slope[0] * currentSalaryExp + metrics.intercept);
-          updateSalaryOutputs(predictedSalary);
-          return;
-        }
-
-        const payload = { experience: currentSalaryExp };
-
-        fetch('/api/salary/predict', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        })
-        .then(res => res.json())
-        .then(result => {
-          predictedSalary = result.predicted_val;
-          updateSalaryOutputs(predictedSalary);
-        });
+        updateSalaryPredictorOutputs();
       } 
       
       else if (activePredictor === 'income') {
-        document.getElementById('sandbox-readout-label').textContent = "EXPECTED INCOME";
-        document.getElementById('sandbox-readout-unit').textContent = "$";
-        
         if (isServerless) {
           predictedIncome = Math.max(0.0, metrics.slope[0] * currentIncomeAge + metrics.slope[1] * currentIncomeExp + metrics.intercept);
-          updateIncomeOutputs(predictedIncome);
+          updateIncomeVisuals(predictedIncome);
+          updatePlotly3DTarget();
           return;
         }
 
@@ -2294,41 +2343,24 @@
         .then(res => res.json())
         .then(result => {
           predictedIncome = result.predicted_val;
-          updateIncomeOutputs(predictedIncome);
+          updateIncomeVisuals(predictedIncome);
+          updatePlotly3DTarget();
         });
       }
     }
 
-    function updateBatteryOutputs(percent) {
+    // Visual updates battery phone mockup
+    function updateMobileVisuals(percent) {
       const roundedPercent = Math.round(percent);
-      document.getElementById('sandbox-readout-val').textContent = roundedPercent;
-      updateMobileVisuals(roundedPercent);
-      updateBatteryChartsTarget();
-    }
-
-    function updateSalaryOutputs(salary) {
-      const roundedSalary = Math.round(salary);
-      document.getElementById('sandbox-readout-val').textContent = roundedSalary.toLocaleString();
-      updateSalaryVisuals(salary);
-      updateSalaryChartsTarget();
-    }
-
-    function updateIncomeOutputs(income) {
-      const roundedIncome = Math.round(income);
-      document.getElementById('sandbox-readout-val').textContent = roundedIncome.toLocaleString();
-      updatePlotly3DTarget();
-    }
-
-    function updateMobileVisuals(roundedPercent) {
       phoneReadoutPercent.innerHTML = `${roundedPercent}<span>%</span>`;
       phoneBatteryFill.style.width = `${roundedPercent}%`;
 
       const translateY = 78 - (roundedPercent * 0.7);
       phoneLiquidWave.style.transform = `translateY(${translateY}%)`;
 
-      let reactiveColor = '#10b981';
+      let reactiveColor = '#7dc490';
       if (roundedPercent > 79) {
-        reactiveColor = '#10b981';
+        reactiveColor = 'var(--pastel-green)';
         hasAlertedLowPower = false;
         lowPowerNotification.classList.remove('show');
       } else if (roundedPercent > 49) {
@@ -2349,13 +2381,12 @@
         }
       }
 
-      document.documentElement.style.setProperty('--primary', reactiveColor);
       document.documentElement.style.setProperty('--theme-reactive', reactiveColor);
-      
       const estHealth = Math.max(82, 100 - Math.round(coordinates.length / 10));
       phoneReadoutHealth.textContent = `Battery Health: ${estHealth}%`;
     }
 
+    // Visual updates salary paycheck mockup
     function updateSalaryVisuals(salary) {
       const roundedSalary = Math.round(salary);
       paycheckReadoutSalary.textContent = `$${roundedSalary.toLocaleString()}`;
@@ -2368,6 +2399,13 @@
       paycheckProgressFill.style.width = `${percentile}%`;
     }
 
+    // Visual updates income multiple regression
+    function updateIncomeVisuals(income) {
+      const roundedIncome = Math.round(income);
+      document.getElementById('income-readout-predicted').textContent = `$${roundedIncome.toLocaleString()}`;
+    }
+
+    // Redraw 2D predictions targets
     function updateBatteryChartsTarget() {
       const basePred = metrics.slope[0] * currentBatterySot + metrics.intercept;
       const varianceVal = basePred - predictedBattery;
@@ -2387,148 +2425,49 @@
     }
 
     function updateSalaryChartsTarget() {
+      const diff = 0; // Simple linear has no settings modifiers to scale predicted salary
+
       if (chartRemainingInst) {
         chartRemainingInst.data.datasets[2].data = [{ x: currentSalaryExp, y: predictedSalary }];
         chartRemainingInst.update('none');
       }
       if (chartConsumedInst) {
+        // weekly representation target
         chartConsumedInst.data.datasets[2].data = [{ x: currentSalaryExp, y: predictedSalary / 52 }];
         chartConsumedInst.update('none');
       }
       if (chartResidualsInst) {
-        chartResidualsInst.data.datasets[2].data = [{ x: currentSalaryExp, y: 0 }];
+        chartResidualsInst.data.datasets[2].data = [{ x: currentSalaryExp, y: diff }];
         chartResidualsInst.update('none');
       }
     }
 
-    // Dynamic metrics display
+    // Render Metrics formula text
     function updateMetricsHUD() {
-      metricsR2.textContent = metrics.r2.toFixed(4);
+      metricsR2.textContent = metrics.r2.toFixed(3);
       metricsIntercept.textContent = metrics.intercept.toLocaleString(undefined, {maximumFractionDigits: 1}) + (activePredictor === 'battery' ? '%' : '');
       metricsSamples.textContent = metrics.n;
 
-      const r2 = metrics.r2;
-      const desc = document.getElementById('r2-descriptor');
-      if (r2 > 0.9) desc.textContent = "Excellent fit";
-      else if (r2 > 0.6) desc.textContent = "Moderate fit";
-      else desc.textContent = "Weak fit";
-
       if (activePredictor === 'battery') {
         metricsSlope.textContent = metrics.slope[0].toFixed(2) + '%';
-        formulaMath.innerHTML = `Battery Remaining % = <span class="highlight">${metrics.slope[0].toFixed(2)}</span> * SOT + <span class="highlight">${metrics.intercept.toFixed(2)}</span>`;
-        document.getElementById('insights-text').innerHTML = `Strong negative slope showing <strong>${Math.abs(metrics.slope[0]).toFixed(2)}%</strong> battery consumed per SOT hour.`;
+        metricsFormula.textContent = `Battery % = ${metrics.slope[0].toFixed(2)} * SOT + ${metrics.intercept.toFixed(2)}`;
       } else if (activePredictor === 'salary') {
-        metricsSlope.textContent = '$' + metrics.slope[0].toLocaleString(undefined, {maximumFractionDigits: 0});
-        formulaMath.innerHTML = `Salary = <span class="highlight">$${metrics.slope[0].toLocaleString(undefined, {maximumFractionDigits: 0})}</span> * Exp + <span class="highlight">$${metrics.intercept.toLocaleString(undefined, {maximumFractionDigits: 0})}</span>`;
-        document.getElementById('insights-text').innerHTML = `Positive slope showing <strong>$${metrics.slope[0].toLocaleString(undefined, {maximumFractionDigits: 0})}</strong> base salary growth per year of experience.`;
+        metricsSlope.textContent = '$' + metrics.slope[0].toFixed(0);
+        metricsFormula.textContent = `Salary = $${metrics.slope[0].toFixed(0)} * Exp + $${metrics.intercept.toFixed(0)}`;
       } else if (activePredictor === 'income') {
-        metricsSlope.textContent = `$${metrics.slope[0].toFixed(0)} / $${metrics.slope[1].toFixed(0)}`;
-        formulaMath.innerHTML = `Income = <span class="highlight">$${metrics.slope[0].toFixed(0)}</span>*Age + <span class="highlight">$${metrics.slope[1].toFixed(0)}</span>*Exp + <span class="highlight">$${metrics.intercept.toFixed(0)}</span>`;
-        document.getElementById('insights-text').innerHTML = `Age weight is <strong>$${metrics.slope[0].toFixed(0)}</strong>/yr, and experience weight is <strong>$${metrics.slope[1].toFixed(0)}</strong>/yr.`;
+        metricsSlope.textContent = `Age: $${metrics.slope[0].toFixed(0)} / Exp: $${metrics.slope[1].toFixed(0)}`;
+        metricsFormula.textContent = `Income = $${metrics.slope[0].toFixed(0)}*Age + $${metrics.slope[1].toFixed(0)}*Exp + $${metrics.intercept.toFixed(0)}`;
       }
     }
 
-    // Dynamic Coordinate list Table builder
-    function buildTableHTML() {
-      const thead = document.getElementById('table-head');
-      const tbody = document.getElementById('table-body');
-      
-      tbody.innerHTML = '';
-      if (activePredictor === 'battery') {
-        thead.innerHTML = `
-          <tr>
-            <th>Screen Time Hours (X)</th>
-            <th>Remaining Battery % (Y)</th>
-            <th style="width: 80px; text-align: center;">Action</th>
-          </tr>
-        `;
-        coordinates.forEach((p, idx) => {
-          tbody.innerHTML += `
-            <tr>
-              <td>${p.screen_time.toFixed(1)} hrs</td>
-              <td>${p.battery_percent.toFixed(1)}%</td>
-              <td>
-                <button class="btn-delete" onclick="deletePoint(${idx})" title="Delete Point">
-                  <svg class="trash-icon-svg" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="3 6 5 6 21 6"></polyline>
-                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                    <line x1="10" y1="11" x2="10" y1="17"></line>
-                    <line x1="14" y1="11" x2="14" y1="17"></line>
-                  </svg>
-                </button>
-              </td>
-            </tr>
-          `;
-        });
-      } 
-      
-      else if (activePredictor === 'salary') {
-        thead.innerHTML = `
-          <tr>
-            <th>Years of Exp (X)</th>
-            <th>Annual Salary (Y)</th>
-            <th style="width: 80px; text-align: center;">Action</th>
-          </tr>
-        `;
-        coordinates.forEach((p, idx) => {
-          tbody.innerHTML += `
-            <tr>
-              <td>${p.experience.toFixed(1)} Yrs</td>
-              <td>$${p.salary.toLocaleString()}</td>
-              <td>
-                <button class="btn-delete" onclick="deletePoint(${idx})" title="Delete Point">
-                  <svg class="trash-icon-svg" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="3 6 5 6 21 6"></polyline>
-                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                    <line x1="10" y1="11" x2="10" y1="17"></line>
-                    <line x1="14" y1="11" x2="14" y1="17"></line>
-                  </svg>
-                </button>
-              </td>
-            </tr>
-          `;
-        });
-      } 
-      
-      else if (activePredictor === 'income') {
-        thead.innerHTML = `
-          <tr>
-            <th>Age (X₁)</th>
-            <th>Experience (X₂)</th>
-            <th>Annual Income (Y)</th>
-            <th style="width: 80px; text-align: center;">Action</th>
-          </tr>
-        `;
-        coordinates.forEach((p, idx) => {
-          tbody.innerHTML += `
-            <tr>
-              <td>${p.age} Yrs</td>
-              <td>${p.experience.toFixed(1)} Yrs</td>
-              <td>$${p.income.toLocaleString()}</td>
-              <td>
-                <button class="btn-delete" onclick="deletePoint(${idx})" title="Delete Point">
-                  <svg class="trash-icon-svg" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="3 6 5 6 21 6"></polyline>
-                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                    <line x1="10" y1="11" x2="10" y1="17"></line>
-                    <line x1="14" y1="11" x2="14" y1="17"></line>
-                  </svg>
-                </button>
-              </td>
-            </tr>
-          `;
-        });
-      }
-    }
-
-    // Submit Point
-    function submitPoint(event) {
+    // Submit Custom Coordinate
+    function submitPoint(event, type) {
       event.preventDefault();
       
       let payload = {};
-      if (activePredictor === 'battery') {
-        const timeInput = document.getElementById('battery-new-sot');
-        const percentInput = document.getElementById('battery-new-percent');
+      if (type === 'battery') {
+        const timeInput = document.getElementById('battery-input-time');
+        const percentInput = document.getElementById('battery-input-percent');
         const timeVal = parseFloat(timeInput.value);
         const percentVal = parseFloat(percentInput.value);
         
@@ -2540,18 +2479,17 @@
           coordinates.push({ screen_time: timeVal, battery_percent: percentVal });
           metrics = trainSimpleModelJS('screen_time', 'battery_percent');
           updateMetricsHUD();
-          buildTableHTML();
           renderThreeCharts();
-          triggerRetrainFlash();
+          triggerRetrainAnimation();
           timeInput.value = ''; percentInput.value = '';
           triggerPrediction();
           return;
         }
       } 
       
-      else if (activePredictor === 'salary') {
-        const expInput = document.getElementById('salary-new-exp');
-        const valInput = document.getElementById('salary-new-val');
+      else if (type === 'salary') {
+        const expInput = document.getElementById('salary-input-exp');
+        const valInput = document.getElementById('salary-input-val');
         const expVal = parseFloat(expInput.value);
         const salVal = parseFloat(valInput.value);
 
@@ -2563,19 +2501,18 @@
           coordinates.push({ experience: expVal, salary: salVal });
           metrics = trainSimpleModelJS('experience', 'salary');
           updateMetricsHUD();
-          buildTableHTML();
           renderThreeCharts();
-          triggerRetrainFlash();
+          triggerRetrainAnimation();
           expInput.value = ''; valInput.value = '';
           triggerPrediction();
           return;
         }
       } 
       
-      else if (activePredictor === 'income') {
-        const ageInput = document.getElementById('income-new-age');
-        const expInput = document.getElementById('income-new-exp');
-        const valInput = document.getElementById('income-new-val');
+      else if (type === 'income') {
+        const ageInput = document.getElementById('income-input-age');
+        const expInput = document.getElementById('income-input-exp');
+        const valInput = document.getElementById('income-input-val');
         const ageVal = parseInt(ageInput.value);
         const expVal = parseFloat(expInput.value);
         const incVal = parseFloat(valInput.value);
@@ -2588,16 +2525,15 @@
           coordinates.push({ age: ageVal, experience: expVal, income: incVal });
           metrics = trainMultipleModelJS();
           updateMetricsHUD();
-          buildTableHTML();
           renderPlotly3D();
-          triggerRetrainFlash();
+          triggerRetrainAnimation();
           ageInput.value = ''; expInput.value = ''; valInput.value = '';
           triggerPrediction();
           return;
         }
       }
 
-      fetch(`/api/${activePredictor}/data`, {
+      fetch(`/api/${type}/data`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -2610,67 +2546,35 @@
       })
       .then(() => {
         sound.playSuccess();
-        document.getElementById('add-data-form').reset();
-        triggerRetrainFlash();
-        syncDatasetState(activePredictor);
+        document.querySelectorAll('form').forEach(f => f.reset());
+        triggerRetrainAnimation();
+        syncDatasetState(type);
       })
       .catch(err => {
         alert(err.message || "Failed to submit coordinates.");
       });
     }
 
-    // Delete coordinate point
-    function deletePoint(idx) {
-      sound.playClick();
-      if (isServerless) {
-        coordinates.splice(idx, 1);
-        if (activePredictor === 'battery') {
-          metrics = trainSimpleModelJS('screen_time', 'battery_percent');
-          renderThreeCharts();
-        } else if (activePredictor === 'salary') {
-          metrics = trainSimpleModelJS('experience', 'salary');
-          renderThreeCharts();
-        } else if (activePredictor === 'income') {
-          metrics = trainMultipleModelJS();
-          renderPlotly3D();
-        }
-        updateMetricsHUD();
-        buildTableHTML();
-        triggerPrediction();
-        return;
-      }
-
-      fetch(`/api/${activePredictor}/delete`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ index: idx })
-      })
-      .then(res => res.json())
-      .then(() => {
-        syncDatasetState(activePredictor);
-      });
-    }
-
-    function triggerRetrainFlash() {
+    function triggerRetrainAnimation() {
       chargingFlash.classList.add('charge-animate');
       setTimeout(() => {
         chargingFlash.classList.remove('charge-animate');
       }, 1200);
     }
 
-    // Reset Defaults
-    function restoreActiveDatasetDefaults() {
+    // Reset Database
+    function resetDataset(type) {
       if (isServerless) {
         sound.playSuccess();
-        runServerlessMode(activePredictor);
+        runServerlessMode(type);
         return;
       }
 
-      fetch(`/api/${activePredictor}/reset`, { method: 'POST' })
+      fetch(`/api/${type}/reset`, { method: 'POST' })
         .then(res => res.json())
         .then(() => {
           sound.playSuccess();
-          syncDatasetState(activePredictor);
+          syncDatasetState(type);
         });
     }
 
@@ -2718,6 +2622,7 @@
         ];
         target1 = [{ x: currentSalaryExp, y: predictedSalary }];
 
+        // Weekly salary representation (Annual / 52)
         scatter2 = coordinates.map(p => ({ x: p.experience, y: p.salary / 52 }));
         line2 = [
           { x: minX, y: Math.max(0, metrics.intercept / 52) },
@@ -2733,6 +2638,7 @@
         target3 = [{ x: currentSalaryExp, y: 0 }];
       }
 
+      // Destroy existing instances
       if (chartRemainingInst) chartRemainingInst.destroy();
       if (chartConsumedInst) chartConsumedInst.destroy();
       if (chartResidualsInst) chartResidualsInst.destroy();
@@ -2759,52 +2665,56 @@
         }
       });
 
-      const lineBorderColor = activePredictor === 'battery' ? '#10b981' : '#e5c158';
-      const scatterBgColor = activePredictor === 'battery' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(229, 193, 88, 0.15)';
-      const scatterBorderColor = activePredictor === 'battery' ? 'rgba(16, 185, 129, 0.4)' : 'rgba(229, 193, 88, 0.4)';
+      const lineBorderColor = activePredictor === 'battery' ? '#6c5ce7' : '#e5c158';
+      const scatterBgColor = activePredictor === 'battery' ? 'rgba(125, 196, 144, 0.65)' : 'rgba(195, 178, 229, 0.65)';
+      const scatterBorderColor = activePredictor === 'battery' ? 'rgba(125, 196, 144, 0.9)' : 'rgba(195, 178, 229, 0.9)';
 
+      // Chart 1: Remaining Capacity / Annual Salary
       chartRemainingInst = new Chart(remainingCtx, {
         type: 'line',
         data: {
           datasets: [
-            { label: 'Coordinates', data: scatter1, type: 'scatter', showLine: false, backgroundColor: scatterBgColor, borderColor: scatterBorderColor, borderWidth: 1, pointRadius: 4.5, pointHoverRadius: 6.5 },
-            { label: 'Regression Line', data: line1, type: 'line', showLine: true, borderColor: lineBorderColor, borderWidth: 4.5, fill: false, pointRadius: 0 },
+            { label: 'Data Points', data: scatter1, type: 'scatter', showLine: false, backgroundColor: scatterBgColor, borderColor: scatterBorderColor, borderWidth: 1, pointRadius: 4.5, pointHoverRadius: 6.5 },
+            { label: 'Fitted Line', data: line1, type: 'line', showLine: true, borderColor: lineBorderColor, borderWidth: 4.5, fill: false, pointRadius: 0 },
             { label: 'Current Target', data: target1, type: 'scatter', showLine: false, backgroundColor: '#f2aa6b', borderColor: '#ffffff', borderWidth: 2, pointRadius: 8.5, pointHoverRadius: 10.5, z: 20 }
           ]
         },
-        options: getCommonOptions(activePredictor === 'battery' ? 'Remaining Battery %' : 'Annual Salary ($)', 0, activePredictor === 'battery' ? 100 : 120000)
+        options: getCommonOptions(activePredictor === 'battery' ? 'Battery Remaining %' : 'Annual Salary ($)', 0, activePredictor === 'battery' ? 100 : 120000)
       });
 
+      // Chart 2: Consumed Battery / Weekly Compensation
       chartConsumedInst = new Chart(consumedCtx, {
         type: 'line',
         data: {
           datasets: [
-            { label: 'Coordinates', data: scatter2, type: 'scatter', showLine: false, backgroundColor: scatterBgColor, borderColor: scatterBorderColor, borderWidth: 1, pointRadius: 4.5, pointHoverRadius: 6.5 },
-            { label: 'Regression Line', data: line2, type: 'line', showLine: true, borderColor: lineBorderColor, borderWidth: 4.5, fill: false, pointRadius: 0 },
+            { label: 'Data Points', data: scatter2, type: 'scatter', showLine: false, backgroundColor: scatterBgColor, borderColor: scatterBorderColor, borderWidth: 1, pointRadius: 4.5, pointHoverRadius: 6.5 },
+            { label: 'Fitted Line', data: line2, type: 'line', showLine: true, borderColor: lineBorderColor, borderWidth: 4.5, fill: false, pointRadius: 0 },
             { label: 'Current Target', data: target2, type: 'scatter', showLine: false, backgroundColor: '#f2aa6b', borderColor: '#ffffff', borderWidth: 2, pointRadius: 8.5, pointHoverRadius: 10.5, z: 20 }
           ]
         },
-        options: getCommonOptions(activePredictor === 'battery' ? 'Consumed Battery %' : 'Weekly Salary ($)', 0, activePredictor === 'battery' ? 100 : 2500)
+        options: getCommonOptions(activePredictor === 'battery' ? 'Battery Consumed %' : 'Weekly Salary ($)', 0, activePredictor === 'battery' ? 100 : 2500)
       });
 
+      // Chart 3: Prediction Variance
       chartResidualsInst = new Chart(residualsCtx, {
         type: 'line',
         data: {
           datasets: [
-            { label: 'Residuals', data: scatter3, type: 'scatter', showLine: false, backgroundColor: 'rgba(242, 186, 128, 0.15)', borderColor: 'rgba(242, 186, 128, 0.4)', borderWidth: 1, pointRadius: 4.5, pointHoverRadius: 6.5 },
+            { label: 'Residuals', data: scatter3, type: 'scatter', showLine: false, backgroundColor: 'rgba(242, 186, 128, 0.65)', borderColor: 'rgba(242, 186, 128, 0.9)', borderWidth: 1, pointRadius: 4.5, pointHoverRadius: 6.5 },
             { label: 'Zero Reference', data: line3, type: 'line', showLine: true, borderColor: '#74b9ff', borderWidth: 3, borderDash: [5, 5], fill: false, pointRadius: 0 },
-            { label: 'Current Target', data: target3, type: 'scatter', showLine: false, backgroundColor: '#f2aa6b', borderColor: '#ffffff', borderWidth: 2, pointRadius: 8.5, pointHoverRadius: 10.5, z: 20 }
+            { label: 'Current Variance', data: target3, type: 'scatter', showLine: false, backgroundColor: '#f2aa6b', borderColor: '#ffffff', borderWidth: 2, pointRadius: 8.5, pointHoverRadius: 10.5, z: 20 }
           ]
         },
         options: getCommonOptions(activePredictor === 'battery' ? 'Simulation Variance %' : 'Residual Error ($)', activePredictor === 'battery' ? -15 : -15000, activePredictor === 'battery' ? 15 : 15000)
       });
     }
 
-    // ==================== PLOTLY 3D PLOTTER ====================
+    // ==================== PLOTLY 3D SURFACE PLOT GENERATOR ====================
     function renderPlotly3D() {
       const container = document.getElementById('plotlyIncome3d');
       if (!container) return;
 
+      // 1. Coordinates scatter trace
       const scatterTrace = {
         x: coordinates.map(p => p.age),
         y: coordinates.map(p => p.experience),
@@ -2820,6 +2730,7 @@
         name: 'Actual Income Data'
       };
 
+      // 2. Linear Regression 3D Plane Mesh calculation
       const gridAge = [];
       for (let i = 0; i < 10; i++) gridAge.push(20 + (60 - 20) * i / 9);
 
@@ -2847,6 +2758,7 @@
         name: 'Regression Plane'
       };
 
+      // 3. User configuration indicator ball
       const activeTrace = {
         x: [currentIncomeAge],
         y: [currentIncomeExp],
@@ -2881,6 +2793,7 @@
       const container = document.getElementById('plotlyIncome3d');
       if (!container || !container.data) return;
 
+      // Update active trace dataset coordinates (trace index 2)
       const updateData = {
         x: [[currentIncomeAge]],
         y: [[currentIncomeExp]],
@@ -2888,6 +2801,232 @@
       };
       
       Plotly.restyle(container, updateData, [2]);
+    }
+
+    // ==================== SALARY PREDICTOR HELPER FUNCTIONS ====================
+    function trainSalaryModelLocal() {
+      const n = salaryDataset.length;
+      if (n === 0) {
+        salaryModel = { m: 0, c: 0, r2: 0, avgX: 0, avgY: 0, n: 0 };
+        return;
+      }
+      if (n === 1) {
+        salaryModel = { m: 0, c: salaryDataset[0].y, r2: 1, avgX: salaryDataset[0].x, avgY: salaryDataset[0].y, n: 1 };
+        return;
+      }
+      let sumX = 0, sumY = 0;
+      for (let i = 0; i < n; i++) {
+        sumX += salaryDataset[i].x;
+        sumY += salaryDataset[i].y;
+      }
+      const avgX = sumX / n;
+      const avgY = sumY / n;
+      
+      let ssXX = 0, ssYY = 0, ssXY = 0;
+      for (let i = 0; i < n; i++) {
+        const diffX = salaryDataset[i].x - avgX;
+        const diffY = salaryDataset[i].y - avgY;
+        ssXX += diffX * diffX;
+        ssYY += diffY * diffY;
+        ssXY += diffX * diffY;
+      }
+      const m = ssXX === 0 ? 0 : ssXY / ssXX;
+      const c = avgY - m * avgX;
+      
+      let sumSqErr = 0, sumSqTot = 0;
+      for (let i = 0; i < n; i++) {
+        const pred = m * salaryDataset[i].x + c;
+        const err = salaryDataset[i].y - pred;
+        const dev = salaryDataset[i].y - avgY;
+        sumSqErr += err * err;
+        sumSqTot += dev * dev;
+      }
+      const r2 = sumSqTot === 0 ? 1 : 1 - (sumSqErr / sumSqTot);
+      
+      salaryModel = { m, c, r2, avgX, avgY, n };
+    }
+
+    function updateSalaryPredictorOutputs() {
+      const pred = Math.max(0, salaryModel.m * currentSalaryExp + salaryModel.c);
+      predictedSalary = pred;
+
+      // Update Sandbox Card expected salary readout
+      document.getElementById('salary-value-num').textContent = Math.round(pred).toLocaleString();
+      document.getElementById('salary-value-info').textContent = `At ${currentSalaryExp.toFixed(1)} years of experience`;
+
+      // Update Paycheck Card Mockup
+      if (paycheckReadoutSalary) paycheckReadoutSalary.textContent = `$${Math.round(pred).toLocaleString()}`;
+      if (paycheckReadoutExp) paycheckReadoutExp.textContent = `${currentSalaryExp.toFixed(1)} Years`;
+      if (paycheckReadoutWeekly) paycheckReadoutWeekly.textContent = `$${Math.round(pred / 52).toLocaleString()}`;
+      
+      const percentile = Math.min(100, Math.round((pred / 120000) * 100));
+      if (paycheckPercentileLabel) paycheckPercentileLabel.textContent = `${percentile}%`;
+      if (paycheckProgressFill) paycheckProgressFill.style.width = `${percentile}%`;
+
+      // Update Insights Card
+      document.getElementById('salary-formula-math').innerHTML = `Salary = <span class="highlight" style="color: #e5c158; font-weight: 700;">$${salaryModel.m.toFixed(0)}</span> * Exp + <span class="highlight" style="color: #e5c158; font-weight: 700;">$${salaryModel.c.toFixed(0)}</span>`;
+      document.getElementById('salary-r2-val').textContent = salaryModel.r2.toFixed(3);
+      document.getElementById('salary-slope-val').textContent = '$' + salaryModel.m.toFixed(0);
+      document.getElementById('salary-intercept-val').textContent = '$' + salaryModel.c.toFixed(0);
+      document.getElementById('salary-samples-val').textContent = salaryModel.n;
+
+      const r2 = salaryModel.r2;
+      const desc = document.getElementById('salary-r2-desc');
+      if (r2 > 0.9) desc.textContent = "Excellent fit";
+      else if (r2 > 0.6) desc.textContent = "Moderate fit";
+      else desc.textContent = "Weak fit";
+
+      document.getElementById('salary-insights-text-desc').innerHTML = `Positive slope showing <strong>$${salaryModel.m.toFixed(0)}</strong> base salary growth per year of experience.`;
+
+      // Update target point in the dedicated line chart
+      if (salaryChart) {
+        salaryChart.data.datasets[2].data = [{ x: currentSalaryExp, y: predictedSalary }];
+        salaryChart.update('none');
+      }
+    }
+
+    function renderSalaryChart() {
+      const ctx = document.getElementById('salary-regression-chart-canvas').getContext('2d');
+      
+      const minX = 0, maxX = 15;
+      const scatterPoints = salaryDataset.map(p => ({ x: p.x, y: p.y }));
+      const linePoints = [
+        { x: minX, y: Math.max(0, salaryModel.c) },
+        { x: maxX, y: Math.max(0, salaryModel.m * maxX + salaryModel.c) }
+      ];
+      const targetPoint = [{ x: currentSalaryExp, y: predictedSalary }];
+
+      if (salaryChart) salaryChart.destroy();
+
+      salaryChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          datasets: [
+            { label: 'Coordinates', data: scatterPoints, type: 'scatter', showLine: false, backgroundColor: 'rgba(229, 193, 88, 0.25)', borderColor: 'rgba(229, 193, 88, 0.8)', borderWidth: 1, pointRadius: 4.5, pointHoverRadius: 6.5 },
+            { label: 'Regression Line', data: linePoints, type: 'line', showLine: true, borderColor: '#e5c158', borderWidth: 4, fill: false, pointRadius: 0 },
+            { label: 'Current Target', data: targetPoint, type: 'scatter', showLine: false, backgroundColor: '#f2aa6b', borderColor: '#ffffff', borderWidth: 2, pointRadius: 8.5, pointHoverRadius: 10.5, z: 20 }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: { duration: 400 },
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { type: 'linear', position: 'bottom', grid: { color: 'rgba(0, 0, 0, 0.03)' }, ticks: { color: '#6c757d', font: { family: 'Outfit', size: 10 } }, min: minX, max: maxX },
+            y: { title: { display: true, text: 'Salary ($)', color: '#6c757d', font: { family: 'Outfit', size: 10, weight: '600' } }, grid: { color: 'rgba(0, 0, 0, 0.03)' }, ticks: { color: '#6c757d', font: { family: 'Outfit', size: 10 } }, min: 0, max: 120000 }
+          }
+        }
+      });
+    }
+
+    function renderSalaryTable() {
+      const tbody = document.getElementById('salary-table-body-rows');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      
+      salaryDataset.forEach((p, idx) => {
+        tbody.innerHTML += `
+          <tr>
+            <td style="padding: 10px;">${p.x.toFixed(1)} Yrs</td>
+            <td style="padding: 10px;">$${p.y.toLocaleString()}</td>
+            <td style="padding: 10px; text-align: center;">
+              <button class="btn-delete" onclick="deleteSalaryPoint(${idx})" title="Delete Point">
+                <svg class="trash-icon-svg" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px; height:14px; fill:none;">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    function handleSalaryExpSlider(slider) {
+      sound.playTick();
+      const val = parseFloat(slider.value);
+      currentSalaryExp = val;
+      document.getElementById('salary-numeric-val-input').value = val.toFixed(1);
+      updateSalaryPredictorOutputs();
+    }
+
+    // Connect synced number input box -> slider
+    function handleSalaryExpNumericBox(input) {
+      let val = parseFloat(input.value);
+      if (isNaN(val)) return;
+      val = Math.max(0, Math.min(15, val));
+      currentSalaryExp = val;
+      document.getElementById('salary-slider-control-input').value = val;
+      updateSalaryPredictorOutputs();
+    }
+
+    function resetSalarySlider() {
+      sound.playClick();
+      currentSalaryExp = 5.0;
+      document.getElementById('salary-slider-control-input').value = 5.0;
+      document.getElementById('salary-numeric-val-input').value = '5.0';
+      updateSalaryPredictorOutputs();
+    }
+
+    function useSalaryMeanExp() {
+      sound.playClick();
+      const mean = parseFloat(salaryModel.avgX.toFixed(1));
+      currentSalaryExp = mean;
+      document.getElementById('salary-slider-control-input').value = mean;
+      document.getElementById('salary-numeric-val-input').value = mean.toFixed(1);
+      updateSalaryPredictorOutputs();
+    }
+
+    function handleSalaryPresetChange(select) {
+      sound.playClick();
+      salaryPreset = select.value;
+      salaryDataset = JSON.parse(JSON.stringify(SALARY_PRESETS[salaryPreset]));
+      trainSalaryModelLocal();
+      renderSalaryTable();
+      renderSalaryChart();
+      updateSalaryPredictorOutputs();
+    }
+
+    function handleSalaryTableAddSubmit(event) {
+      event.preventDefault();
+      const expInput = document.getElementById('salary-add-exp');
+      const valInput = document.getElementById('salary-add-salary');
+      const expVal = parseFloat(expInput.value);
+      const salVal = parseFloat(valInput.value);
+      
+      if (isNaN(expVal) || isNaN(salVal)) return;
+      
+      sound.playSuccess();
+      salaryDataset.push({ x: expVal, y: salVal });
+      
+      trainSalaryModelLocal();
+      renderSalaryTable();
+      renderSalaryChart();
+      updateSalaryPredictorOutputs();
+      
+      expInput.value = '';
+      valInput.value = '';
+    }
+
+    function deleteSalaryPoint(idx) {
+      sound.playClick();
+      salaryDataset.splice(idx, 1);
+      trainSalaryModelLocal();
+      renderSalaryTable();
+      renderSalaryChart();
+      updateSalaryPredictorOutputs();
+    }
+
+    function restoreSalaryDatasetDefaults(event) {
+      if (event) event.preventDefault();
+      sound.playSuccess();
+      salaryDataset = JSON.parse(JSON.stringify(SALARY_PRESETS.corporate));
+      document.getElementById('salary-preset-select').value = 'corporate';
+      trainSalaryModelLocal();
+      renderSalaryTable();
+      renderSalaryChart();
+      updateSalaryPredictorOutputs();
     }
   </script>
 </body>
